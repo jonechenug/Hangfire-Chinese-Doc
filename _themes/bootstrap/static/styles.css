@@ -1,0 +1,455 @@
+/*
+* bootstrap-sphinx.css
+* ~~~~~~~~~~~~~~~~~~~~
+*
+* Sphinx stylesheet -- Bootstrap theme.
+*/
+
+.navbar-inverse .brand {
+    color: #FFF;
+}
+
+.page-top {
+    top: 0px;
+}
+
+.navbar-default {
+    background-color: #eee;
+}
+
+table {
+    border: 0;
+}
+
+.highlighttable .code pre {
+    font-size: 12px;
+}
+
+.highlighttable .linenos pre {
+    word-break: normal;
+    font-size: 12px;
+}
+
+div.highlight {
+    background: none;
+}
+
+a.footnote-reference {
+    vertical-align: super;
+    font-size: 75%;
+}
+
+table.footnote td.label {
+    font-size: 100%;
+    display: block;
+    line-height: normal;
+    background: inherit;
+}
+
+table.footnote {
+    width: auto;
+    margin-bottom: 0px;
+}
+
+table.field-list {
+    width: auto;
+}
+
+.footer {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}
+
+.bs-sidenav form, .bs-sidenav #sourcelink {
+    padding: 5px 20px;
+}
+
+.bs-sidenav.affix {
+    position: static;
+}
+
+/* First level of nav */
+.bs-sidenav {
+    padding-top:    10px;
+    padding-bottom: 10px;
+    text-shadow: 0 1px 0 #fff;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.bs-sidenav h4 {
+    margin: 5px 20px 7px;
+    color: #888;
+    font-size: 20px;
+    padding-bottom: 7px;
+    border-bottom: solid 1px #ddd;
+}
+
+.bs-sidenav > ul {
+    margin-bottom: 10px;
+}
+
+/* All levels of nav */
+.bs-sidenav #toctree ul > li > a {
+    display: block;
+    color: #428bca;
+    padding: 5px 20px;
+}
+.bs-sidenav #toctree ul > li > a:hover,
+.bs-sidenav #toctree ul > li > a:focus {
+    text-decoration: none;
+    background-color: #e5e3e9;
+    border-right: 1px solid #dbd8e0;
+}
+.bs-sidenav #toctree ul > .active > a,
+.bs-sidenav #toctree ul > .active:hover > a,
+.bs-sidenav #toctree ul > .active:focus > a {
+  font-weight: bold;
+  color: #563d7c;
+  background-color: transparent;
+  border-right: 1px solid #563d7c;
+}
+
+.bs-sidenav #toctree ul ul > li > a {
+  padding-top:    5px;
+  padding-bottom: 5px;
+  padding-left: 40px;
+  font-size: 95%;
+}
+
+/* Show and affix the side nav when space allows it */
+@media screen and (min-width: 992px) {
+  .bs-sidenav #toctree ul > .active > ul {
+    display: block;
+  }
+  /* Widen the fixed sidenav */
+  .bs-sidenav.affix,
+  .bs-sidenav.affix-bottom {
+    width: 213px;
+  }
+  .bs-sidenav.affix {
+    position: fixed; /* Undo the static from mobile first approach */
+    top: 80px;
+  }
+  .bs-sidenav.affix-bottom {
+    position: absolute; /* Undo the static from mobile first approach */
+  }
+  .bs-sidenav.affix-bottom .bs-sidenav,
+  .bs-sidenav.affix .bs-sidenav {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+@media screen and (min-width: 1200px) {
+  /* Widen the fixed sidenav again */
+  .bs-sidenav.affix-bottom,
+  .bs-sidenav.affix {
+    width: 263px;
+  }
+}
+
+.section code, .section tt {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  font-weight: inherit;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.section code:before, .section code:after, .section tt:before, .section tt:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.section pre {
+  padding: 10px 15px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+  border: none;
+}
+
+.section pre .hll {
+    background-color: #f7f774!important;
+    margin: 0 -15px;
+    padding: 0 15px;
+    display: block;
+}
+
+div.admonition {
+  padding: 15px 20px;
+  margin: 20px 0;
+  border: 1px solid #eee;
+  border-left-width: 5px;
+  border-radius: 3px;
+  line-height: 1.4;
+}
+
+div.admonition p.admonition-title {
+  font-size: 18px;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1.1;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+div.admonition.note {
+  border-left-color: #5bc0de;
+}
+
+div.admonition.note p.admonition-title {
+  color: #5bc0de;
+}
+
+div.admonition.warning {
+  border-left-color: #f0ad4e;
+}
+
+div.admonition.warning p.admonition-title {
+  color: #f0ad4e;
+}
+
+div.admonition p.last {
+  margin-bottom: 0;
+}
+
+.highlight .k, .highlight .kt {
+  color: #182AFC;
+  font-weight: normal;
+}
+
+.highlight .s {
+  color: #A01714;
+}
+
+.highlight .nc, .highlight .nf, .highlight .na {
+  color: #2B91AF;
+  font-weight: normal;
+}
+
+.highlight .nt {
+  color: #A31515;
+  font-weight: normal;
+}
+
+.highlight-xml .na {
+  color: #FF0000;
+}
+
+.highlight .c, .highlight .c1, .highlight .cm {
+  color: #008000;
+  font-style: normal;
+}
+
+.highlight .nn {
+  font-weight: normal;
+  color: inherit;
+}
+
+.highlight-xml .s {
+  color: #0000FF;
+}
+
+.section {
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.toc-backref, .toc-backref:hover, .toc-backref:active,
+.headerlink, .headerlink:hover, .headerlink:active {
+  color: inherit;
+  text-decoration: none;
+}
+
+.section h1 {
+    margin-top: 0;
+    padding-bottom: 9px;
+    margin: 0 0 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.section h2 {
+    font-size: 28px;
+}
+
+.breadcrumb-aside {
+  float: right;
+}
+
+.breadcrumb-aside a,
+.breadcrumb-aside a:hover {
+  text-decoration: none;
+}
+
+.breadcrumb>li+li.breadcrumb-aside:before {
+  content: none;
+  padding:0;
+}
+
+.bs-sidenav ul > li > ul {
+  display: none;
+}
+
+.bs-sidenav ul > li.current > ul {
+  display: block;
+}
+
+.bs-sidenav #toctree li a.current,
+.bs-sidenav #toctree li a.current:hover,
+.bs-sidenav #toctree li a.current:focus {
+  color: #fff;
+  background-color: #428bca;
+  text-shadow: none;
+}
+
+footer {
+    background-color: #eee;
+    color: #747474;
+    margin-top: 20px;
+    padding: 20px 0;
+    width: 100%;    
+}
+
+@media (min-width:767px) {
+    html {
+        position: relative;
+        min-height: 100%;
+    }
+
+    body {
+        margin-bottom: 220px;
+    }
+
+    footer {
+        height: 185px;
+        padding-bottom: 10px;
+        position: absolute;
+        bottom: 0;
+    }
+}
+
+.navbar-hangfire {
+    margin-bottom: 30px;
+    background-color: #eee;
+    border: none;
+}
+
+.navbar-hangfire .icon-bar {
+    background-color: #333;
+}
+
+.navbar-hangfire .navbar-nav .active>a,
+.navbar-hangfire .navbar-nav .active>a:hover {
+    background-color: #ccc;
+    color: #fff;
+}
+
+.navbar-hangfire .navbar-nav>.open>a, 
+.navbar-hangfire .navbar-nav>.open>a:hover, 
+.navbar-hangfire .navbar-nav>.open>a:focus {
+    background-color: #ddd;
+    color: #555;
+}
+
+.navbar-hangfire ul.nav li.dropdown.dropdown-auto:hover>a {
+    background-color: #ddd;
+}
+
+.navbar-hangfire ul.nav li.dropdown.dropdown-auto:hover > ul.dropdown-menu {
+    display: block;
+}
+
+a.headerlink {
+    margin-left: 10px;
+    -webkit-transition: all 0.25s;
+    -moz-transition: all 0.25s;
+    -o-transition: all 0.25s;
+    transition: all 0.25s;
+    opacity:0;
+    visibility: visible;
+}
+
+h1:hover > a.headerlink, 
+h2:hover > a.headerlink, 
+h3:hover > a.headerlink, 
+h4:hover > a.headerlink, 
+h5:hover > a.headerlink, 
+h6:hover > a.headerlink, 
+dt:hover > a.headerlink {
+    opacity: 1;
+}
+
+.copyright {
+    margin-top: 20px;
+    color: #999;
+}
+
+#toctree ul {
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+#toctree ul > li {
+    position: relative;
+    display: block; 
+}
+
+.injected {
+    display: none;
+}
+
+img {
+    margin-bottom: 10px;
+}
+
+p img {
+    margin-bottom: 0;
+}
+
+div.topic {
+    border: none;
+}
+
+.st-default-search-input {
+    display: inline-block;
+    width: 190px;
+    height: 16px;
+    padding: 7px 11px 7px 28px;
+    border: 1px solid #bbb;
+    border: 1px solid rgba(0,0,0,0.25);
+    font-weight: 400;
+    color: #3A444F;
+    font-size: 14px;
+    line-height: 16px;
+    box-sizing: content-box;
+    background: #fff 8px 8px no-repeat url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6%2BR8AAAACXB…Hx4Taq1nrnKaW8K6XUUsrHWuvNevdRRLzFGwzvDbXAB9cDAHvhedDruuxSAAAAAElFTkSuQmCC);
+    background-clip: padding-box;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    font-family: system, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
+.div-thumbnail {
+        padding: 4px;
+    /* line-height: 1.42857143; */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
