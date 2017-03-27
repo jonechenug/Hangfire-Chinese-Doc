@@ -33,9 +33,9 @@
 .. admonition:: 请配置授权
    :class: warning
 
-   默认情况下，只有本地访问权限才能使用Hangfire仪表板。为了远程访问必须配置 `仪表板授权 <configuration/using-dashboard.html#configuring-authorization>`__ 。
+   默认情况下，只有本地访问权限才能使用Hangfire仪表盘。为了远程访问必须配置 `仪表盘授权 <configuration/using-dashboard.html#configuring-authorization>`__ 。
 
-然后打开Hangfire仪表板来测试您的配置。请构建项目并在浏览器中打开以下URL：
+然后打开Hangfire仪表盘来测试您的配置。请构建项目并在浏览器中打开以下URL：
 
 .. raw:: html
 
