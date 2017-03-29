@@ -1,25 +1,24 @@
-Using Dashboard
+使用仪表盘
 ================
 
-Hangfire Dashboard is a place where you could find all the information about your background jobs. It is written as an OWIN middleware (if you are not familiar with OWIN, don't worry), so you can plug it into your ASP.NET, ASP.NET MVC, Nancy, ServiceStack application as well as use `OWIN Self-Host <http://www.asp.net/web-api/overview/hosting-aspnet-web-api/use-owin-to-self-host-web-api>`_ feature to host Dashboard inside console applications or in Windows Services.
+Hangfire 仪表盘可以找到所有后台任务信息。它被写成一个OWIN中间件(如果你不熟悉OWIN也不用担心), 所以你可以在 ASP.NET, ASP.NET MVC, Nancy, ServiceStack 以及 使用 `OWIN Self-Host <http://www.asp.net/web-api/overview/hosting-aspnet-web-api/use-owin-to-self-host-web-api>`_ 特性的控制台应用程序或Windows服务中使用仪表盘。
 
 .. contents::
    :local:
 
-Adding Dashboard
+添加仪表盘
 -----------------
 
-.. admonition:: Additional package required for ASP.NET + IIS
-   :class: note
+.. admonition:: ASP.NET + IIS 需要额外的软件包
 
-   Before moving to the next steps, ensure you have `Microsoft.Owin.Host.SystemWeb <https://www.nuget.org/packages/Microsoft.Owin.Host.SystemWeb/>`_ package installed, otherwise you'll have different strange problems with the Dashboard.
+  在进行下一步之前，请确保你已经安装 `Microsoft.Owin.Host.SystemWeb <https://www.nuget.org/packages/Microsoft.Owin.Host.SystemWeb/>`_ 软件包，否则您将在仪表盘中遇到各种不同的奇怪问题。
 
-`OWIN Startup class <http://www.asp.net/aspnet/overview/owin-and-katana/owin-startup-class-detection>`_ is intended to keep web application bootstrap logic in a single place. In Visual Studio 2013 you can add it by right clicking on the project and choosing the *Add / OWIN Startup Class* menu item.
+`OWIN Startup class <http://www.asp.net/aspnet/overview/owin-and-katana/owin-startup-class-detection>`_ 将 web 应用程序启动逻辑统一在一个单一的位置。 在 Visual Studio 2013 您可以通过右键单击项目并选择 *Add / OWIN Startup Class* 菜单来添加它。
 
 .. image:: add-owin-startup.png
 
 
-If you have Visual Studio 2012 or earlier, just create a regular class in the root folder of your application, name it ``Startup`` and place the following contents:
+如果您有 Visual Studio 2012 或更早版本，只需在应用程序的根文件夹中创建一个常规类，将其命名 ``Startup`` 并输入以下内容：
 
 .. code-block:: c#
 
@@ -41,25 +40,24 @@ If you have Visual Studio 2012 or earlier, just create a regular class in the ro
         }
     }
 
-After performing these steps, open your browser and hit the *http://<your-app>/hangfire* URL to see the Dashboard.
+执行这些步骤后，打开浏览器并点击 *http://<your-app>/hangfire* 进入仪表盘。
 
-.. admonition:: Authorization configuration required
+.. admonition:: 需要配置授权
    :class: warning
 
-   By default Hangfire allows access to Dashboard pages **only for local requests**. In order to give appropriate rights for production use, please see the `Configuring Authorization`_ section.
+   默认情况下，Hangfire **只允许本地访问** 仪表盘。在生产环境中需要配置相关的使用权限，请参阅 `配置授权`_ 部分。
 
-Configuring Authorization
+配置授权
 --------------------------
 
-Hangfire Dashboard exposes sensitive information about your background jobs, including method names and serialized arguments as well as gives you an opportunity to manage them by performing different actions – retry, delete, trigger, etc. So it is really important to restrict access to the Dashboard. 
+Hangfire 仪表盘公开了后台作业的敏感信息，包括方法名称和序列化参数，还可以通过执行不同的操作（重试，删除，触发器等）来管理这些信息。因此，限制对仪表盘的访问非常重要。
 
-To make it secure by default, only **local requests are allowed**, however you can change this by passing your own implementations of the ``IAuthorizationFilter`` interface, whose ``Authorize`` method is used to allow or prohibit a request. The first step is to provide your own implementation.
+默认情况下, 只 **允许本地访问**, 但是您可以通过继承 ``IAuthorizationFilter`` 接口实现特定的授权规则，  ``Authorize`` 方法用于允许或禁止请求。第一步是提供自己的实现。
 
-.. admonition:: Don't want to reinvent the wheel?
+.. admonition:: 不想重复造轮子？
    :class: note
 
-   User, role and claims -based as well as basic access authentication-based (simple login-password auth) authorization filters available as a NuGet package
-   `Hangfire.Dashboard.Authorization <https://github.com/HangfireIO/Hangfire.Dashboard.Authorization>`_.
+   如NuGet软件包 `Hangfire.Dashboard.Authorization <https://github.com/HangfireIO/Hangfire.Dashboard.Authorization>`_ 实现用户、角色和权限，以及基于访问身份验证（简单的登录密码验证）的授权筛选器，
 
 .. code-block:: c#
 
@@ -76,7 +74,7 @@ To make it secure by default, only **local requests are allowed**, however you c
          }
     }
 
-The second step is to pass it to the ``UseHangfireDashboard`` method. You can pass multiple filters, and the access will be granted only if *all of them* return ``true``.
+第二步是将其传递给 ``UseHangfireDashboard`` 方法。您可以传递多个过滤器，只有当 *所有过滤器* 都返回时，才会授予 ``允许`` 访问权限。
 
 .. code-block:: c#
 
@@ -85,10 +83,10 @@ The second step is to pass it to the ``UseHangfireDashboard`` method. You can pa
         AuthorizationFilters = new[] { new MyRestrictiveAuthorizationFilter() }
     });
 
-.. admonition:: Method call order is important
+.. admonition:: 方法调用顺序很重要
    :class: warning
 
-   Place a call to the ``UseHangfireDashboard`` method **after other authentication methods** in your OWIN Startup class. Otherwise authentication may not work for you.
+   在OWIN启动类中的 **其他身份验证方法之后** 调用 ``UseHangfireDashboard`` 方法。否则认证可能无效。
 
    .. code-block:: c#
 
@@ -98,10 +96,10 @@ The second step is to pass it to the ``UseHangfireDashboard`` method. You can pa
             app.UseHangfireDashboard();       // Hangfire - last
         }
 
-Change URL Mapping
+更改URL映射
 -------------------
 
-By default, ``UseHangfireDashboard`` method maps the Dashboard to the ``/hangfire`` path. If you want to change this for one reason or another, just pass your URL path.
+默认情况下， ``UseHangfireDashboard`` 方法将仪表盘映射到 ``/hangfire`` 路径。如果您希望通过某种原因更改此设置，只需传递URL路径即可。
 
 .. code-block:: c#
 
@@ -111,10 +109,10 @@ By default, ``UseHangfireDashboard`` method maps the Dashboard to the ``/hangfir
    // Map to the `/jobs` URL
    app.UseHangfireDashboard("/jobs");
 
-Change *Back to site* Link
+更改 *返回站点* 链接
 ---------------------------
 
-By default, *Back to site* link (top-right corner of Dashboard) leads you to the root URL of your application. In order to change it, use the ``DashboardOptions`` class.
+默认情况下， *返回站点* 链接 (仪表盘右上角) 将指向应用程序的根路径。请使用 ``DashboardOptions`` 改变它。
 
 .. code-block:: c#
 
@@ -125,10 +123,10 @@ By default, *Back to site* link (top-right corner of Dashboard) leads you to the
 
    app.UseHangfireDashboard("/hangfire", options);
 
-Multiple Dashboards
+多个仪表盘
 --------------------
 
-You can also map multiple dashboards that show information about different storages.
+您还可以映射多个显示不同存储仓储的仪表盘。
 
 .. code-block:: c#
 

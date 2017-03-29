@@ -1,9 +1,9 @@
-Configuration
+配置
 ==============
 
-Starting from version 1.4, ``GlobalConfiguration`` class is the preferred way to configure Hangfire. This is an entry point for a couple of methods, including ones from third-party storage implementations or other extensions. The usage is simple, just include ``Hangfire`` namespace in your application initialization class and discover extension methods for the ``GlobalConfiguration.Configuration`` property.
+从1.4版本开始, ``GlobalConfiguration`` 类是配置Hangfire的首选方式.这里有一些重要入口方法,包括来自第三方存储实现或其他扩展。 用法很简单,在应用程序初始化类中包含``Hangfire``命名空间， 在 ``GlobalConfiguration.Configuration`` 属性中使用这些扩展方法。
 
-For example, in ASP.NET applications, you can place initialization logic to the ``Global.asax.cs`` file:
+例如, 在 ASP.NET 应用程序中,您可以将初始化逻辑放在``Global.asax.cs`` 文件中:
 
 .. code-block:: c#
 
@@ -22,7 +22,7 @@ For example, in ASP.NET applications, you can place initialization logic to the 
         }
     }
 
-For OWIN-based applications (ASP.NET MVC, Nancy, ServiceStack, FubuMVC, etc.), place the configuration lines to the OWIN Startup class.
+对于基于OWIN的应用程序（ASP.NET MVC，Nancy，ServiceStack，FubuMVC等）， 在 OWIN 启动类中写入配置。
 
 .. code-block:: c#
 
@@ -37,7 +37,7 @@ For OWIN-based applications (ASP.NET MVC, Nancy, ServiceStack, FubuMVC, etc.), p
         }
     }
 
-For other applications, place it somewhere **before** calling other Hangfire methods.
+对于其他程序, 在调用其他Hangfire方法 **之前** 写入配置。
 
 .. toctree::
    :maxdepth: 1
