@@ -1,3 +1,16 @@
+# Hangfire 中文文档
+基于官方文档机翻修改，在线访问地址：[点我访问](http://koukouge-hangfire.daoapp.io/quick-start.html)
+# Docker 支持
+运行:
+```
+docker run --restart always  --name hangfire -d -p 8080:80 daocloud.io/koukouge/hangfirezhdoc
+```
+浏览器访问 ``http://127.0.0.1:8080/quick-start.html`` 即可查看文档。
+
+删除:
+```
+docker rm -f hangfire
+```
 # Hangfire Documentation
 
 [![Documentation Status](https://readthedocs.org/projects/hangfire/badge/?version=latest)](https://readthedocs.org/projects/hangfire/?badge=latest) 
