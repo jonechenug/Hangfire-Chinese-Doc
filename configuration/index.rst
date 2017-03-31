@@ -1,9 +1,9 @@
 配置
 ==============
 
-从1.4版本开始, ``GlobalConfiguration`` 类是配置Hangfire的首选方式.这里有一些重要入口方法,包括来自第三方存储实现或其他扩展。 用法很简单,在应用程序初始化类中包含``Hangfire``命名空间， 在 ``GlobalConfiguration.Configuration`` 属性中使用这些扩展方法。
+从1.4版本开始, ``GlobalConfiguration`` 类是配置Hangfire的首选方式.这里有一些重要入口方法,包括来自第三方存储实现或其他扩展。 用法很简单,在应用程序初始化类中包含 ``Hangfire`` 命名空间， 在 ``GlobalConfiguration.Configuration`` 属性中使用这些扩展方法。
 
-例如, 在 ASP.NET 应用程序中,您可以将初始化逻辑放在``Global.asax.cs`` 文件中:
+例如, 在 ASP.NET 应用程序中,您可以将初始化逻辑放在 ``Global.asax.cs`` 文件中:
 
 .. code-block:: c#
 
