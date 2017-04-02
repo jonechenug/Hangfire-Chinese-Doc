@@ -1,30 +1,30 @@
-Using SQL Server
+使用 SQL Server 
 =================
 
-SQL Server is the default storage for Hangfire – it is well known to many .NET developers and used in many project environments. It may be interesting that in the early stage of Hangfire development, Redis was used to store information about jobs, and SQL Server storage implementation was inspired by that NoSql solution. But back to the SQL Server…
+SQL Server是Hangfire的默认存储– 它是许多.NET开发人员所熟知的，并用于许多项目。 有趣的是，在Hangfire开发的早期阶段，Redis最先被用于存储任务的信息，NoSql的解决方案激发了SQL Server作为任务存储的灵感。还是说回SQL Server 。。。
 
-SQL Server storage implementation is available through the ``Hangfire.SqlServer`` NuGet package. To install it, type the following command in your NuGet Package Console window:
+SQL Server存储实现可通过 ``Hangfire.SqlServerNuGet`` 软件包获得。 请在NuGet软件包控制台窗口中输入以下命令安装：
 
 .. code-block:: powershell
 
    Install-Package Hangfire.SqlServer
 
-This package is a dependency of the Hangfire's bootstrapper package ``Hangfire``, so if you installed it, you don't need to install the ``Hangfire.SqlServer`` separately – it was already added to your project.
+如果你已经安装 ``Hangfire`` NuGet软件包，不需要单独安装 ``Hangfire.SqlServer`` - 它已经被作为依赖添加到你的项目。
 
-.. admonition:: Supported database engines
+.. admonition:: 支持的数据库引擎
    :class: note
 
-   **Microsoft SQL Server 2008R2** (any edition, including LocalDB) and later, **Microsoft SQL Azure**.
+   **Microsoft SQL Server 2008R2** (任何版本，包括LocalDB)和更高版本以及 **Microsoft SQL Azure**.
 
-.. admonition:: Snapshot isolation is not supported!
+.. admonition:: 不支持快照隔离!
    :class: warning
 
-   **Applies only to Hangfire < 1.5.9**: Ensure your database doesn't use the snapshot isolation level, and the ``READ_COMMITTED_SNAPSHOT`` option (another name is *Is Read Committed Snapshot On*) **is disabled**. Otherwise some of your background jobs will not be processed.
+   **仅适用于Hangfire < 1.5.9**: 确保您的数据库不使用快照隔离级别，并且 ``READ_COMMITTED_SNAPSHOT`` 选项 (另一个名称为 *Is Read Committed Snapshot On*) **被禁用**。否则某些后台作业将不被处理。
 
-Configuration
+配置
 --------------
 
-The package provides extension methods for ``GlobalConfiguration`` class. Choose either a `connection string <https://www.connectionstrings.com/sqlconnection/>`_ to your SQL Server or a connection string name, if you have it.
+该包提供了GlobalConfiguration类的扩展方法。 使用任何你拥有的SQL Server的 `连接字符串 <https://www.connectionstrings.com/sqlconnection/>`_ 或者连接名称。
 
 .. code-block:: c#
 
@@ -34,18 +34,18 @@ The package provides extension methods for ``GlobalConfiguration`` class. Choose
        // Use custom connection string
        .UseSqlServerStorage(@"Server=.\sqlexpress; Database=Hangfire; Integrated Security=SSPI;");
 
-Installing objects
+安装数据库
 ~~~~~~~~~~~~~~~~~~~
 
-Hangfire leverages a couple of tables and indexes to persist background jobs and other information related to the processing:
+Hangfire有这么几个表和索引来存储后台任务和相关的其他信息：
 
 .. image:: sql-schema.png
 
-Some of these tables are used for the core functionality, others fulfill the extensibility needs (making possible to write extensions without changing the underlying schema). Advanced objects like stored procedures, triggers and so on are not used to keep things as simple as possible and allow the library to be used with SQL Azure.
+一些表用于核心功能，其他表用于满足可扩展性需求(使得可以在不更改基础架构的情况下编写扩展)。不使用像存储过程、触发器等高级特性, 以保持尽量简单并兼容SQL Azure。
 
-SQL Server objects are **installed automatically** from the ``SqlServerStorage`` constructor by executing statements described in the ``Install.sql`` file (which is located under the ``tools`` folder in the NuGet package). Which contains the migration script, so new versions of Hangfire with schema changes can be installed seamlessly, without your intervention.
+ ``Install.sql`` 文件(位于NuGet包中的 ``tools`` 文件夹下) 将在 ``SqlServerStorage`` 的构造函数中 **自动执行** 到对应数据库。其中包括迁移脚本，因此可以无需您的干预，新版本的Hangfire对于数据库的变动将被无缝迁移。
 
-If you want to install objects manually, or integrate it with your existing migration subsystem, pass your decision through the SQL Server storage options:
+如果要手动安装，或将其与现有迁移子系统进行集成,请修改SQL Server存储配置：
 
 .. code-block:: c#
 
@@ -56,12 +56,12 @@ If you want to install objects manually, or integrate it with your existing migr
 
    GlobalConfiguration.Configuration.UseSqlServerStorage("<name or connection string>", options);
 
-Configuring the Polling Interval
+配置轮询间隔
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-One of the main disadvantage of raw SQL Server job storage implementation – it uses the polling technique to fetch new jobs. You can adjust the polling interval, but, as always, lower intervals can harm your SQL Server, and higher interval produce too much latency, so be careful. 
+SQL Server存储有一个主要的的缺点- 它使用轮询技术来获取新任务。您可以调整轮询间隔，但是较低的间隔可能会损害您的SQL Server，而较高的间隔会产生太多延迟，因此请小心。
 
-Please note that **millisecond-based intervals aren't supported**, you can only use intervals starting from *1 second*.
+请注意， **不支持基于毫秒的间隔**，最低使用1秒间隔。
 
 .. code-block:: c#
 
@@ -72,5 +72,5 @@ Please note that **millisecond-based intervals aren't supported**, you can only 
 
    GlobalConfiguration.Configuration.UseSqlServerStorage("<name or connection string>", options);
 
-If you want to remove the polling technique, consider using the MSMQ extensions or Redis storage implementation.
+如果您想删除轮询技术，请考虑使用MSMQ扩展或Redis存储实现。
 
