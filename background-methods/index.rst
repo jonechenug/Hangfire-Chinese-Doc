@@ -1,4 +1,4 @@
-Background methods
+后台方法
 ===================
 
 .. toctree::

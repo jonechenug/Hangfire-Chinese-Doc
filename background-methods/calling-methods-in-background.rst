@@ -1,31 +1,31 @@
-Calling methods in background
+在后台中调用方法
 =============================
 
-Fire-and-forget method invocation has never been simpler. As you already know from the :doc:`Quick start <../quick-start>` guide, you only need to pass a lambda expression with the corresponding method and its arguments:
+Fire-and-forget 的调用方法极其简单。正如您从 :doc:`快速开始<../quick-start>` 一节中了解到，您只需要传递一个具有相应方法和参数的lambda表达式：
 
 .. code-block:: c#
 
   BackgroundJob.Enqueue(() => Console.WriteLine("Hello, world!"));
 
-The ``Enqueue`` method does not call the target method immediately, it runs the following steps instead:
+``Enqueue`` 方法不会立即调用目标方法，而是运行以下步骤：
 
-1. Serialize a method information and all its arguments.
-2. Create a new background job based on the serialized information.
-3. Save background job to a persistent storage.
-4. Enqueue background job to its queue.
+1. 序列化目标方法及其所有参数。
+2. 根据序列化的信息创建一个新的后台任务。
+3. 将后台任务保存到持久化存储。
+4. 将后台任务入队。
 
-After these steps were performed, the ``BackgroundJob.Enqueue`` method immediately returns to a caller. Another Hangfire component, called :doc:`Hangfire Server <../background-processing/processing-background-jobs>`, checks the persistent storage for enqueued background jobs and performs them in a reliable way. 
+执行这些步骤后， ``BackgroundJob.Enqueue`` 方法立即返回结果。轮到另一个Hangfire组件，:doc:`Hangfire Server <../background-processing/processing-background-jobs>` 将会从持久化存储中检查到队列中有后台任务后如期执行。
 
-Enqueued jobs are handled by a dedicated pool of worker threads. The following process is invoked by each worker:
+队列任务由专门的工作线程处理。每个节点将如下述流程执行任务:
 
-1. Fetch next job and hide it from other workers.
-2. Perform the job and all its extension filters.
-3. Remove the job from the queue.
+1. 获取一个任务，并对其他节点隐藏该任务。
+2. 执行任务及其所有的扩展过滤器。
+3. 从队列中删除该任务。
 
-So, the job is removed only after processing succeeds. Even if a process was terminated during the performance, Hangfire will perform compensation logic to guarantee the processing of each job.
+因此，只有处理成功后才能删除该任务。即使一个进程在执行期间被终止，Hangfire将执行补偿逻辑来保证每个任务都被处理。
 
-Each storage has its own implementation for each of these steps and compensation logic mechanisms:
+每种持久存储各有各自的步骤和补偿逻辑机制：
 
-* **SQL Server** implementation uses regular SQL transactions, so in case of a process termination, background job id is placed back on a queue instantly.
-* **MSMQ** implementation uses transactional queues, so there is no need for periodic checks. Jobs are fetched almost immediately after enqueueing.
-* **Redis** implementation uses blocking ``BRPOPLPUSH`` command, so jobs are fetched immediately, as with MSMQ. But in case of process termination, they are re-enqueued only after timeout expiration (30 minutes by default).
+* **SQL Server** 使用常规SQL事务，因此在进程终止的情况下，后台作业ID立即放回队列。
+* **MSMQ** 使用事务队列，因此不需要定期检查。入队后几乎立即获取作业。
+* **Redis** 实现使用阻塞的 ``BRPOPLPUSH`` 命令，因此与MSMQ一样立即获取作业。但是在进程终止的情况下，只有在超时到期后（默认为30分钟）才重新排队。
