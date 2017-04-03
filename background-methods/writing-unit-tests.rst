@@ -1,11 +1,11 @@
-Writing unit tests
+编写单元测试
 ===================
 
-I will not tell you anything related to unit testing background methods, because Hangfire does not add any specific changes to them (except ``IJobCancellationToken`` interface parameter). Use your favourite tools and write unit tests for them as usual. This section describes how to test that background jobs were created.
+我不会告诉你有关后台任务的单元测试的任何内容，因为Hangfire没有添加任何特定方法 (除了 ``IJobCancellationToken`` 接口参数)去改变任务。使用您最喜爱的工具，并照常写入单元测试。本节介绍如何测试创建的后台任务。
 
-All the code examples use the static ``BackgroundJob`` class to tell you how to do this or that stuff, because it is simple for demonstrational purposes. But when you want to test a method that invokes static methods, it becomes a pain.
+所有的代码示例都使用静态 ``BackgroundJob`` 类来告诉你如何做这个或那些东西，只是出于简单演示的目的。但是当你想测试调用的静态方法时，会变得很痛苦。
 
-But don't worry – the ``BackgroundJob`` class is just a facade for the ``IBackgroundJobClient`` interface and its default implementation – ``BackgroundJobClient`` class. If you want to write unit tests, use them. For example, consider the following controller that is used to enqueue background jobs:
+不用担心 - ``BackgroundJob`` 类只是 ``IBackgroundJobClient`` 接口及其默认实现 ``BackgroundJobClient`` 类的一个入口。如果要编写单元测试，请使用它们。例如，假设在以下控制器入队一个后台任务：
 
 .. code-block:: c#
 
@@ -33,7 +33,7 @@ But don't worry – the ``BackgroundJob`` class is just a facade for the ``IBack
         }
     }
 
-Simple, yeah. Now you can use any mocking framework, for example, `Moq <https://github.com/Moq/moq4>`_ to provide mocks and check the invocations. The ``IBackgroundJobClient`` interface provides only one method for creating a background job – the ``Create`` method, that takes a ``Job`` class instance, that represents the information about the invocation, and a ``IState`` interface implementation to know the creating job's state.
+很简单，对吧。现在你可以使用任何 mocking 框架, 如提供mocks和检查调用的 `Moq <https://github.com/Moq/moq4>`_ 。 ``IBackgroundJobClient`` 接口仅提供 ``Create`` 方法来创建后台任务并实例化对应的类。通过 ``Job`` 类的实例了解后台任务的信息，通过 ``IState`` 接口了解后台任务的状态。
 
 .. code-block:: c#
 
@@ -56,4 +56,4 @@ Simple, yeah. Now you can use any mocking framework, for example, `Moq <https://
     
 .. note::
 
-   ``job.Method`` property points only to background job's method information. If you also want to check a type name, use the ``job.Type`` property.
+   ``job.Method`` 属性仅适用于后台任务的方法信息。如果您还想检查类型名称，请使用 ``job.Type`` 属性。
