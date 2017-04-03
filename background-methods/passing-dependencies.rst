@@ -1,16 +1,16 @@
-Passing dependencies
+传递依赖
 =======================
 
-In almost every job you'll want to use other classes of your application to perform different work and keep your code clean and simple. Let's call these classes as *dependencies*. How to pass these dependencies to methods that will be called in background?
+在应用中，您希望使用不同的类来处理不同的任务以保持代码的简洁。我们把这些类称为 *依赖*。如何将这些依赖关系传递给将在后台任务调用的方法呢？
 
-When you are calling static methods in background, you are restricted only to the static context of your application, and this requires you to use the following patterns of obtaining dependencies:
+当您在后台任务中调用静态方法时，仅限于应用程序的静态上下文，这需要您使用以下获取依赖关系的模式：
 
-* Manual dependency instantiation through the ``new`` operator
-* `Service location <http://en.wikipedia.org/wiki/Service_locator_pattern>`_
-* `Abstract factories <http://en.wikipedia.org/wiki/Abstract_factory_pattern>`_ or `builders <http://en.wikipedia.org/wiki/Builder_pattern>`_
-* `Singletons <http://en.wikipedia.org/wiki/Singleton_pattern>`_
+* 通过 ``new`` 手动实例化依赖
+* `服务定位器模式 <http://en.wikipedia.org/wiki/Service_locator_pattern>`_
+* `抽象工厂模式 <http://en.wikipedia.org/wiki/Abstract_factory_pattern>`_ 或 `建设者模式 <http://en.wikipedia.org/wiki/Builder_pattern>`_
+* `单例模式 <http://en.wikipedia.org/wiki/Singleton_pattern>`_
 
-However, all of these patterns greatly complicate the unit testability aspect of your application. To fight with this issue, Hangfire allows you to call instance methods in background. Consider you have the following class that uses some kind of ``DbContext`` to access the database, and ``EmailService`` to send emails.
+然而，所有这些模式使您的应用程序的单元可测试性方面变得非常复杂。为了解决这个问题，Hangfire允许你在后台任务调用实例方法。想象你有以下的类使用 ``DbContext`` 的某种方式去连接数据库，并且使用 ``EmailService`` 发送邮件。
 
 .. code-block:: c#
 
@@ -25,13 +25,13 @@ However, all of these patterns greatly complicate the unit testability aspect of
         }
     }
 
-To call the ``Send`` method in background, use the following override of the ``Enqueue`` method (other methods of ``BackgroundJob`` class provide such overloads as well):
+为了在后台任务中调用 ``Send`` 方法,使用以下的方法重写 ``Enqueue`` 方法 ( ``BackgroundJob`` 类的其他方法也提供此类重载)：
 
 .. code-block:: c#
 
    BackgroundJob.Enqueue<EmailSender>(x => x.Send(13, "Hello!"));
 
-When a worker determines that it need to call an instance method, it creates the instance of a given class first using the current ``JobActivator`` class instance. By default, it uses the ``Activator.CreateInstance`` method that can create an instance of your class using **its default constructor**, so let's add it:
+当一个worker 需要调用一个实例方法时，它首先使用当前的 ``JobActivator`` 来实例化给定的类。默认情况下，使用 ``Activator.CreateInstance`` 方法可以为你的类创建一个 **默认构造函数** 的实例,如下：
 
 .. code-block:: c#
 
@@ -49,7 +49,7 @@ When a worker determines that it need to call an instance method, it creates the
        // ...
    }
 
-If you want the class to be ready for unit testing, consider to add constructor overload, because the **default activator can not create instance of class that has no default constructor**:
+如果您希望类可以进行单元测试，请考虑重载构造函数，因为 **默认的 Activator 无法创建一个没有默认构造函数的类的实例** :
 
 .. code-block:: c#
 
@@ -69,4 +69,4 @@ If you want the class to be ready for unit testing, consider to add constructor 
         }
     }
 
-If you are using IoC containers, such as Autofac, Ninject, SimpleInjector and so on, you can remove the default constructor. To learn how to do this, proceed to the next section.
+如果您使用IoC容器，例如Autofac，Ninject，SimpleInjector等，可以删除默认构造函数。要了解更多，请继续下一节。
