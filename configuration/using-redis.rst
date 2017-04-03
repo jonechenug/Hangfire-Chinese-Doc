@@ -126,7 +126,7 @@ Hangfire.Pro.Redis 2.x
 选项                          配置                         描述
 ============================ ============================ ===========
 Database                     ``null``                     Hangfire使用的Redis服务器，空的情况下使用默认的连接字符串
-InvisibilityTimeout          ``TimeSpan.FromMinutes(30)`` 任务转移间隔, 在这段间隔内，后台任务任为同一节点处理；超时后将转移到另一个节点处理
+InvisibilityTimeout          ``TimeSpan.FromMinutes(30)`` 任务转移间隔, 在这段间隔内，后台任务任为同一个worker处理；超时后将转移到另一个worker处理
 Prefix                       ``hangfire:``                在Redis存储中Hangfire使用的Key前缀
 MaxSucceededListLength       ``10000``                    成功列表中的最大可见后台任务，以防止其无限期增长。
 MaxDeletedListLength         ``1000``                     删除列表中的最大可见后台作业，以防止其无限期增长。

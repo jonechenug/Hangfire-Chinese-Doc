@@ -16,9 +16,9 @@ Fire-and-forget 的调用方法极其简单。正如您从 :doc:`快速开始<..
 
 执行这些步骤后， ``BackgroundJob.Enqueue`` 方法立即返回结果。轮到另一个Hangfire组件，:doc:`Hangfire Server <../background-processing/processing-background-jobs>` 将会从持久化存储中检查到队列中有后台任务后如期执行。
 
-队列任务由专门的工作线程处理。每个节点将如下述流程执行任务:
+队列任务由专门的工作线程处理。每个worker将如下述流程执行任务:
 
-1. 获取一个任务，并对其他节点隐藏该任务。
+1. 获取一个任务，并对其他worker隐藏该任务。
 2. 执行任务及其所有的扩展过滤器。
 3. 从队列中删除该任务。
 
