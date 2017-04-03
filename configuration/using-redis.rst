@@ -1,44 +1,43 @@
-Using Redis
+使用 Redis
 ============
 
-.. admonition:: Pro Only
-   :class: note
+.. admonition:: 仅限 Pro
 
-   Starting from Hangfire 1.2, this feature is a part of `Hangfire Pro <http://hangfire.io/pro/>`_ package set
+  从Hangfire 1.2开始，此功能是 `Hangfire Pro <http://hangfire.io/pro/>`_ 软件包的一部分。
 
-Hangfire with Redis job storage implementation processes jobs much faster than with SQL Server storage. On my development machine I observed more than 4x throughput improvement with empty jobs (method that does not do anything). ``Hangfire.Pro.Redis`` leverages the ``BRPOPLPUSH`` command to fetch jobs, so the job processing latency is kept to minimum.
+使用Redis存储的Hangfire比使用SQL Server存储执行任务快得多。在我的开发机器上，我观察到执行同样的空白任务（不做任何事情的方法），吞吐量改善4倍多。 ``Hangfire.Pro.Redis`` 利用 ``BRPOPLPUSH`` 命令获取作业，因此任务处理延迟保持最小。
 
 .. image:: storage-compare.png
    :align: center
 
-Please, see the `downloads page <http://redis.io/download>`_ to obtain latest version of Redis. If you unfamiliar with this great storage, please see its `documentation <http://redis.io/documentation>`_. Binaries for Windows are available through NuGet (`32-bit <https://www.nuget.org/packages/Redis-32/>`_, `64-bit <https://www.nuget.org/packages/Redis-64/>`_) and Chocolatey galleries (`64-bit <http://chocolatey.org/packages/redis-64>`_ only).
+请参阅 `下载页面 <http://redis.io/download>`_ 获取最新版本的Redis。 如果您不熟悉Redis，请参阅其 `文档 <http://redis.io/documentation>`_。 Windows的二进制文件可以通过NuGet (`32-bit <https://www.nuget.org/packages/Redis-32/>`_， `64-bit <https://www.nuget.org/packages/Redis-64/>`_) 和 Chocolatey galleries (仅有 `64-bit <http://chocolatey.org/packages/redis-64>`_ )获取。
 
-Limitations
+限制
 ------------
 
-Despite of StackExchange.Redis library does support some of the following features, we can’t use them immediately. For example, to support high availability via master/slave replication, we should first implement the `Redlock <http://redis.io/topics/distlock>`_ algorithm to ensure that distributed locks are working correctly in corner cases. For Cluster support, together with Redlock, we should ensure that subscriptions are working properly all the time.
+尽管StackExchange.Redis库确实支持以下一些功能，但我们不能立即使用它们。例如，为了通过主/从复制来支持高可用性，我们必须先实现 `Redlock <http://redis.io/topics/distlock>`_ 算法，以确保在分布式锁的情况下仍正常工作。为了支持群集以及对应的Redlock算法，我们必须确保订阅一直正常运行。
 
-**So, multiple endpoints, Redis Cluster and Redis Sentinel aren’t supported yet.**
+**因此，不支持Redis多节点、Redis集群和Redis主从切换。**
 
-Redis Configuration
+配置Redis数据库
 --------------------
 
-Please read the `official Redis documentation <http://redis.io/documentation>`_ to learn how to configure it, especially `Redis Persistence <http://redis.io/topics/persistence>`_ and `Redis Administration <http://redis.io/topics/admin>`_ sections to get started with the fundamentals. The following options should be configured to run your background jobs smoothly. 
+请阅读 `Redis的官方文档 <http://redis.io/documentation>`_ ，了解如何进行配置，特别是 `Redis Persistence <http://redis.io/topics/persistence>`_ 和 `Redis Administration <http://redis.io/topics/admin>`_ 部分的基础知识。保证后台任务平稳运行应配置以下选项：
 
-.. admonition:: Ensure the following options are configured
+.. admonition:: 确保配置了以下选项
    :class: warning
 
-   These values are default for on-premise Redis installations, but other environments may have different defaults, for example **Azure Redis Cache** and **AWS ElastiCache** **use non-compatible settings** by default.  
+   这些值是Redis的默认值，但不同环境可能有不同的默认值，例如 **Azure Redis Cache** 和 **AWS ElastiCache** 默认情况下 **有不兼容的设置** 。
 
 .. code-block:: shell
 
-   # Non-zero value cause long-running background jobs to be 
-   # processed multiple times due to connection was closed.
-   # NOTE: This setting is only required for Hangfire.Pro.Redis 1.x!
+   # 非零值导致长时间运行的后台任务
+   # 由于连接被关闭而被多次处理
+   # 注意: 此设置仅适用于 Hangfire.Pro.Redis 1.x!
    timeout 0
 
-   # Hangfire neither expect that non-expired keys are deleted,
-   # nor expiring keys are evicted before the expiration time.
+   # Hangfire 既不希望Redis的永久键(non-expired keys)被删除,
+   # 也不希望Redis的限时键(expiring keys)被提前移除
    maxmemory-policy noeviction
 
 Hangfire.Pro.Redis 2.x
@@ -46,18 +45,18 @@ Hangfire.Pro.Redis 2.x
 
 
 
-Redis ≥ 2.6 is required
+需要Redis≥2.6
 
-Installation
+安装
 ~~~~~~~~~~~~~
 
-Ensure that you have configured the private Hangfire Pro NuGet feed as `written here <http://hangfire.io/pro/downloads.html#configuring-feed>`_, and use your favorite NuGet client to install the ``Hangfire.Pro.Redis`` package:
+确保您已配置了私有的 Hangfire Pro NuGet软件包（ `地址 <http://hangfire.io/pro/downloads.html#configuring-feed>`_ ），并且使用自己喜欢的的NuGet客户端安装 ``Hangfire.Pro.Redis`` 软件包：
 
 .. code-block:: powershell
 
    PM> Install-Package Hangfire.Pro.Redis
 
-If your project targets .NET Core, just add a dependency in your ``project.json`` file:
+如果您的项目针对.NET Core，只需在 ``project.json`` 文件中添加依赖关系：
 
 .. code-block:: json
 
@@ -65,30 +64,30 @@ If your project targets .NET Core, just add a dependency in your ``project.json`
        "Hangfire.Pro.Redis": "2.0.2"
    }
 
-Configuration
+配置
 ~~~~~~~~~~~~~~
 
-After installing the package, a couple of the ``UseRedisStorage`` extension method overloads will be available for the ``IGlobalConfiguration`` interface. They allow you to configure Redis job storage, using both *configuration string* and Hangfire-specific *options*.
+安装软件包后，可以使用一些 ``UseRedisStorage`` 的扩展方法重载来实现 ``IGlobalConfiguration`` 接口。 允许您使用 *配置字符串* 和Hangfire特有的 *选项* 配置Redis任务存储。
 
-Connection string
+连接字符串
 ^^^^^^^^^^^^^^^^^
 
-The basic one is the following, will connect to the Redis on *localhost* using the default port, database and options:
+最基础的一项，默认连接到 *localhost* 的Redis服务器的默认端口，使用默认的配置:
 
 .. code-block:: csharp
 
    GlobalConfiguration.Configuration.UseRedisStorage();
 
-For ASP.NET Core projects, call the ``UseRedisStorage`` method from the ``AddHangfire`` method delegate: 
+对于ASP.NET Core项目，在 ``AddHangfire`` 方法的委托中调用 ``UseRedisStorage`` 方法:
 
 .. code-block:: csharp
 
    services.AddHangfire(configuration => configuration.UseRedisStorage());
 
-You can customize the connection string using the StackExchange.Redis' configuration string format. Please read `their documentation <https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md>`_ for details. The values for the following options have their own defaults in Hangfire, but can be overriden in the *connection string*:
+您可以使用 'StackExchange.Redis' 配置连接字符串的方法自定义连接，请阅读 `StackExchange.Redis的文档 <https://github.com/StackExchange/StackExchange.Redis/blob/master/Docs/Configuration.md>`_ 了解详情。以下选项的值在Hangfire中具有自己的默认值，但可以在 *连接字符串* 中覆盖：
 
 =============== =======
-Option          Default
+选项             默认
 =============== =======
 ``syncTimeout`` ``30000``
 ``allowAdmin``  ``true``
@@ -99,17 +98,17 @@ Option          Default
    GlobalConfiguration.Configuration
        .UseRedisStorage("contoso5.redis.cache.windows.net,abortConnect=false,ssl=true,password=...");
 
-In .NET Core you need to use IP addresses instead, because DNS lookup isn't available in StackExchange.Redis for .NET Core.
+在.NET Core中，您需要使用IP地址，因为在.NET Core中的StackExchange.Redis中不能使用DNS查找。
 
 .. code-block:: csharp
 
    GlobalConfiguration.Configuration
        .UseRedisStorage("127.0.0.1");
 
-Passing options
+特殊配置选项
 ^^^^^^^^^^^^^^^
 
-You can also pass the Hangfire-specific options for Redis storage by using the ``RedisStorageOptions`` class instances:
+您还可以通过 ``RedisStorageOptions`` 类的实例实现Hangfire的特殊选项：
 
 .. code-block:: csharp
 
@@ -121,28 +120,28 @@ You can also pass the Hangfire-specific options for Redis storage by using the `
 
    GlobalConfiguration.Configuration.UseRedisStorage("localhost", options);
 
-The following options are available for configuration:
+以下选项可用于配置：
 
 ============================ ============================ ===========
-Option                       Default                      Description
+选项                          配置                         描述
 ============================ ============================ ===========
-Database                     ``null``                     Redis database number to be used by Hangfire. When null, then the defaultDatabase option from the configuration string is used.
-InvisibilityTimeout          ``TimeSpan.FromMinutes(30)`` Time interval, within which background job is considered to be still successfully processed by a worker. When a timeout is elapsed, another worker will be able to pick the same background job.
-Prefix                       ``hangfire:``                Prefix for all Redis keys related to Hangfire.
-MaxSucceededListLength       ``10000``                    Maximum visible background jobs in the succeeed list to prevent it from growing indefinitely.
-MaxDeletedListLength         ``1000``                     Maximum visible background jobs in the deleted list to prevent it from growing indefinitely.
-SubscriptionIntegrityTimeout ``TimeSpan.FromHours(1)``    Timeout for subscription-based fetch. The value should be high enough enough (hours) to decrease the stress on a database. This is an additional layer to provide integrity, because otherwise subscriptions can be active for weeks, and bad things may happen during this time.
+Database                     ``null``                     Hangfire使用的Redis服务器，空的情况下使用默认的连接字符串
+InvisibilityTimeout          ``TimeSpan.FromMinutes(30)`` 任务转移间隔, 在这段间隔内，后台任务任为同一节点处理；超时后将转移到另一个节点处理
+Prefix                       ``hangfire:``                在Redis存储中Hangfire使用的Key前缀
+MaxSucceededListLength       ``10000``                    成功列表中的最大可见后台任务，以防止其无限期增长。
+MaxDeletedListLength         ``1000``                     删除列表中的最大可见后台作业，以防止其无限期增长。
+SubscriptionIntegrityTimeout ``TimeSpan.FromHours(1)``    执行订阅的时间间隔，该值应足够高（按小时）以减少数据库的压力。反之为保证完整性，每几周执行订阅时，这期间可能有意外发生。
 ============================ ============================ ===========
 
 Hangfire.Pro.Redis 1.x
 -----------------------
 
-This is the old version of Redis job storage for Hangfire. It is based on `ServiceStack.Redis 3.71 <https://github.com/ServiceStack/ServiceStack.Redis/tree/v3>`_, and has no SSL and .NET Core support. No new features will be added for this version. **This version is deprecated**, switch to the new version to get the new features.
+这是Hangfire的Redis任务存储的旧版本。它基于 `ServiceStack.Redis 3.71 <https://github.com/ServiceStack/ServiceStack.Redis/tree/v3>`_，并且不支持SSL、不支持.NET Core。**此版本已弃用** ， 不会添加任何新功能，请切换到新版本以获取新功能。
 
-Configuration
+配置
 ~~~~~~~~~~~~~~
 
-Hangfire.Pro.Redis package contains some extension methods for the ``GlobalConfiguration`` class:
+Hangfire.Pro.Redis包包含一些 ``GlobalConfiguration`` 类的扩展方法：
 
 .. code-block:: c#
 
@@ -163,10 +162,10 @@ Hangfire.Pro.Redis package contains some extension methods for the ``GlobalConfi
    GlobalConfiguration.Configuration
        .UseRedisStorage("localhost", 0, options);
 
-Connection pool size
+配置连接池大小
 ~~~~~~~~~~~~~~~~~~~~~
 
-Hangfire leverages connection pool to get connections quickly and shorten their usage. You can configure the pool size to match your environment needs:
+Hangfire利用连接池快速连接并缩短使用时间。您可以配置池大小以满足您的环境需求：
 
 .. code-block:: c#
 
@@ -177,10 +176,10 @@ Hangfire leverages connection pool to get connections quickly and shorten their 
 
    GlobalConfiguration.Configuration.UseRedisStorage("localhost", 0, options);
 
-Using key prefixes
+配置Redis键(Key)前缀
 ~~~~~~~~~~~~~~~~~~~
 
-If you are using a shared Redis server for multiple environments, you can specify unique prefix for each environment:
+如果您在多个环境中使用共享的Redis服务器，则可以为每个环境指定唯一的前缀：
 
 .. code-block:: c#
 
