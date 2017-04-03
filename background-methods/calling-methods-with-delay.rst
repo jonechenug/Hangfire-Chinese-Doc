@@ -9,7 +9,7 @@
        () => Console.WriteLine("Hello, world"),
        TimeSpan.FromDays(1));
 
-:doc:`Hangfire Server <../background-processing/processing-background-jobs>` 定期检查计划任务并将其入队, allowing workers to perform them. By default, check interval is equal to ``15 seconds``, but you can change it, just pass the corresponding option to the ``BackgroundJobServer`` ctor.
+:doc:`Hangfire Server <../background-processing/processing-background-jobs>` 定期检查计划任务并将其入队,并允许worker执行。默认情况下，检查的间隔时间是 ``15 秒``, 但您可以更改它，只需将相应的选项传递给 ``BackgroundJobServer`` 的构造器。
 
 .. code-block:: c#
 
@@ -20,7 +20,7 @@
 
   var server = new BackgroundJobServer(options);
 
-If you are processing your jobs inside an ASP.NET application, you should be warned about some setting that may prevent your scheduled jobs to be performed in-time. To avoid that behavior, perform the following steps:
+如果您正在ASP.NET应用程序中处理您的任务，某些设置可能会阻止您的任务如期执行。要避免此行为，请执行以下步骤：
 
-* `Disable Idle Timeout <http://bradkingsley.com/iis7-application-pool-idle-time-out-settings/>`_ – set its value to ``0``.
-* Use the `application auto-start <http://weblogs.asp.net/scottgu/auto-start-asp-net-applications-vs-2010-and-net-4-0-series>`_ feature.
+* `禁用空闲超时  <http://bradkingsley.com/iis7-application-pool-idle-time-out-settings/>`_ – 将其值设置为 ``0``。
+* 使用 `application auto-start <http://weblogs.asp.net/scottgu/auto-start-asp-net-applications-vs-2010-and-net-4-0-series>`_ 功能。
