@@ -1,21 +1,21 @@
-Passing arguments
+传递参数
 ==================
 
-You can pass additional data to your background jobs as a regular method arguments. I'll write the following line once again (hope it hasn't bothered you):
+您可以将其他数据作为常规方法参数传递到后台任务。我再次使用下面的例子（希望没有让你厌恶）：
 
 .. code-block:: c#
 
    BackgroundJob.Enqueue(() => Console.WriteLine("Hello, {0}!", "world"));
 
-As in a regular method call, these arguments will be available for the ``Console.WriteLine`` method during the performance of the background job. But since they are marshaled through process boundaries, they are serialized.
+在常规方法调用中，在执行后台作业期间， ``Console.WriteLine`` 方法将使用这些参数。为了参数传递进去，需要先序列化。
 
-The **awesome** `Newtonsoft.Json <http://james.newtonking.com/json>`_ package is used to serialize arguments into JSON strings (since version ``1.1.0``). So you can use almost any type as a parameter; including arrays, collections and custom objects. Please see `corresponding documentation <http://james.newtonking.com/json/help/index.html>`_ for more details.
+使用 **了不起的** `Newtonsoft.Json <http://james.newtonking.com/json>`_ 软件包来序列参数成JSON字符串 (自 ``1.1.0`` 版本后)。所以你可以使用几乎任何类型作为参数; 包括数组，集合和自定义对象。详细内容，请参阅 `相应的文档 <http://james.newtonking.com/json/help/index.html>`_ 。
 
-.. admonition:: Reference parameters are not supported
+.. admonition:: 参数不支持引用传递
    :class: note
 
-   You can not pass arguments to parameters by reference – ``ref`` and ``out`` keywords are **not supported**.
+   你不能有引用传递的参数 – ``ref`` 和 ``out`` 关键字 **不被支持**.
 
-Since arguments are serialized, consider their values carefully as they can blow up your job storage. Most of the time it is more efficient to store concrete values in an application database and pass their identifiers only to your background jobs.
+由于参数是序列化的，谨慎考虑参数的值避免让你的存储膨胀。大多数情况下，更有效的方式是在应用程序的数据库中使用具体的标识符（id）并将其传递到后台任务。
 
-Remember that background jobs may be processed days or weeks after they were enqueued. If you use data that is subject to change in your arguments, it may become stale – database records may be deleted, the text of an article may be changed, etc. Plan for these changes and design your background jobs accordingly.
+请记住，后台作业可能在入队后的几天或几周内进行处理。如果您使用参数中可能会变化的数据，则可能会变得过时– 数据库记录可能会被删除，文章的文本可能会被更改等。 因此需要根据你的任务设计好参数。
