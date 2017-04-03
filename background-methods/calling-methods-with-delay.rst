@@ -1,7 +1,7 @@
-Calling methods with delay
+调用延时方法
 ===========================
 
-Sometimes you may want to postpone a method invocation; for example, to send an email to newly registered users a day after their registration. To do this, just call the ``BackgroundJob.Schedule`` method and pass the needed time span:
+有时你可能想推迟调用一个方法;例如，在注册后的一天向新注册的用户发送电子邮件。要做到这一点，只需调用 ``BackgroundJob.Schedule`` 方法并传递所需的时间跨度：
 
 .. code-block:: c#
 
@@ -9,7 +9,7 @@ Sometimes you may want to postpone a method invocation; for example, to send an 
        () => Console.WriteLine("Hello, world"),
        TimeSpan.FromDays(1));
 
-:doc:`Hangfire Server <../background-processing/processing-background-jobs>` periodically check the schedule to enqueue scheduled jobs to their queues, allowing workers to perform them. By default, check interval is equal to ``15 seconds``, but you can change it, just pass the corresponding option to the ``BackgroundJobServer`` ctor.
+:doc:`Hangfire Server <../background-processing/processing-background-jobs>` 定期检查计划任务并将其入队, allowing workers to perform them. By default, check interval is equal to ``15 seconds``, but you can change it, just pass the corresponding option to the ``BackgroundJobServer`` ctor.
 
 .. code-block:: c#
 
