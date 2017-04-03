@@ -1,62 +1,62 @@
-Performing recurrent tasks
+执行周期性任务
 ===========================
 
-Recurring job registration is just as simple as background job registration – you only need to write a single line of code:
+执行周期性任务也是一样简单，您只需要编写一行代码：
 
 .. code-block:: c#
 
    RecurringJob.AddOrUpdate(() => Console.Write("Easy!"), Cron.Daily);
 
-This line creates a new entry in persistant storage. A special component in Hangfire Server (see :doc:`../background-processing/processing-background-jobs`) checks the recurring jobs on a minute-based interval and then enqueues them as fire-and-forget jobs. This enables you to track them as usual.
+此行在持久存储中创建一个新实体。 Hangfire Server中的一个特殊组件(请参阅 :doc:`../background-processing/processing-background-jobs`) 以分钟为间隔检查周期性任务，然后在队列中将其视作 fire-and-forget 任务。这样就可以照常跟踪它们。
 
-.. admonition:: Make sure your app always running
+.. admonition:: 确保您的应用程序始终运行
    :class: warning
 
-   Your Hangfire Server instance should be always on to perform scheduling and processing logic. If you perform the processing inside an ASP.NET application, please also read the :doc:`../deployment-to-production/making-aspnet-app-always-running` chapter.
+   您的Hangfire Server实例应始终运行，并执行任务调度和处理逻辑。如果您在ASP.NET应用程序中执行处理，还请阅读 :doc:`../deployment-to-production/making-aspnet-app-always-running` 一章。
 
-The ``Cron`` class contains different methods and overloads to run jobs on a minute, hourly, daily, weekly, monthly and yearly basis. You can also use `CRON expressions <http://en.wikipedia.org/wiki/Cron#CRON_expression>`_ to specify a more complex schedule:
+``Cron`` 类包含不同的方法和重载，以分钟，小时，每天，每周，每月和每年的方式运行任务。您还可以使用 `CRON 表达式 <http://en.wikipedia.org/wiki/Cron#CRON_expression>`_ 来执行更复杂的计划：
 
 .. code-block:: c#
 
    RecurringJob.AddOrUpdate(() => Console.Write("Powerful!"), "0 12 * */2");
 
-Specifying identifiers
+指定标识符
 -----------------------
 
-Each recurring job has its own unique identifier. In the previous examples it was  generated implicitly, using the type and method names of the given call expression (resulting in ``"Console.Write"`` as the identifier). The ``RecurringJob`` class contains overloads that take an explicitly defined job identifier.  So that you can refer to the job later.
+每个循环作业都有自己的唯一标识符。在前面的例子中，它使用调用的表达式的类型和方法名称 (导致 ``"Console.Write"`` 作为标识符)隐式生成。  ``RecurringJob`` 类包含一个明确定义的任务标识符重载，所以你可以参考下面这个例子。
 
 .. code-block:: c#
 
    RecurringJob.AddOrUpdate("some-id", () => Console.WriteLine(), Cron.Hourly);
 
-The call to ``AddOrUpdate`` method will create a new recurring job or update existing job with the same identifier.
+调用 ``AddOrUpdate`` 方法将创建一个新的循环作业或更新具有相同标识符的现有任务。
 
-.. admonition:: Identifiers should be unique
+.. admonition:: 标识符应该是唯一的
    :class: warning
 
-   Use unique identifiers for each recurring job, otherwise you'll end with a single job.
+   对每个周期任务使用唯一的标识符，否则您将以单个作业结束。
 
-.. admonition:: Identifiers may be case sensitive
+.. admonition:: 标识符可能区分大小写
    :class: note
 
-   Recurring job identifier may be **case sensitive** in some storage implementations.
+   在一些存储实现中，重复的作业标识符可能 **区分大小写**。
 
-Manipulating recurring jobs
+操作周期任务
 ----------------------------
 
-You can remove an existing recurring job by calling the ``RemoveIfExists`` method. It does not throw an exception when there is no such recurring job.
+您可以通过调用 ``RemoveIfExists`` 方法来删除现有的周期任务。当不存在该周期工作时，它不会抛出异常。
 
 .. code-block:: c#
 
    RecurringJob.RemoveIfExists("some-id");
 
-To run a recurring job now, call the ``Trigger`` method. The information about triggered invocation will not be recorded in the recurring job itself, and its next execution time will not be recalculated from this running.  For example, if you have a weekly job that runs on Wednesday, and you manually trigger it on Friday it will run on the following Wednesday.  
+要立即执行周期任务，请调用 ``Trigger`` 方法。关于触发调用的信息不会记录在周期任务，并且不会改变下一次执行任务的时间。例如，如果有一周每周三触发的任务，当你在周五手动触发时，下一次触发的时间还是下周三。
 
 .. code-block:: c#
 
    RecurringJob.Trigger("some-id");
 
-The ``RecurringJob`` class is a facade for the ``RecurringJobManager`` class. If you want some more power and responsibility, consider using it:
+ ``RecurringJob``类是 ``RecurringJobManager`` 类的一个入口。如果您想要更多的权力和责任，请考虑使用它：
 
 .. code-block:: c#
 
