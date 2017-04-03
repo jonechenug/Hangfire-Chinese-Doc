@@ -1,7 +1,7 @@
-Using IoC containers
+使用ioc容器
 =====================
 
-As I said in the :doc:`previous section <passing-dependencies>` Hangfire uses the ``JobActivator`` class to instantiate the target types before invoking instance methods. You can override its behavior to perform more complex logic on a type instantiation. For example, you can tell it to use IoC container that is used in your project:
+正如我在 :doc:`上一节 <passing-dependencies>` 中所述，在调用实例方法之前，Hangfire 使用 ``JobActivator`` 来实例化目标类型。您可以通过重写类型的实例化来执行更复杂的逻辑。例如，您可以在项目中使用IoC容器：
 
 .. code-block:: c#
 
@@ -20,7 +20,7 @@ As I said in the :doc:`previous section <passing-dependencies>` Hangfire uses th
        }
    }
 
-Then, you need to register it as a current job activator before starting the Hangfire server:
+然后在启动Hangfire服务器之前，将其注册:
 
 .. code-block:: c#
 
@@ -30,22 +30,22 @@ Then, you need to register it as a current job activator before starting the Han
    ...
    app.UseHangfireServer();
 
-To simplify the initial installation, there are some integration  packages already available on NuGet:
+为了简化初始安装，NuGet上已经有一些集成软件包：
 
 * `Hangfire.Autofac <https://www.nuget.org/packages/Hangfire.Autofac/>`_
 * `Hangfire.Ninject <https://www.nuget.org/packages/Hangfire.Ninject/>`_
 * `Hangfire.SimpleInjector <https://www.nuget.org/packages/Hangfire.SimpleInjector/>`_
 * `Hangfire.Windsor <https://www.nuget.org/packages/Hangfire.Windsor/>`_
 
-Some of these activators also provide an extension method for the ``GlobalConfiguration`` class:
+其中某些软件包还为 ``GlobalConfiguration`` 提供了一个扩展:
 
 .. code-block:: c#
 
    GlobalConfiguration.Configuration.UseNinjectActivator(kernel);
 
-.. admonition:: ``HttpContext`` is not available
+.. admonition:: ``HttpContext`` 不可用
    :class: warning
    
-   Request information is not available during the instantiation of a target type. If you register your dependencies in a request scope (``InstancePerHttpRequest`` in Autofac, ``InRequestScope`` in Ninject and so on), an exception will be thrown during the job activation process.
+   在目标类型的实例化过程中，Request information是不可用的。如果您在一个请求作用域(Autofac的 ``InstancePerHttpRequest`` ， Ninject的 ``InRequestScope`` ) 中注册了依赖项，则在任务激活过程中将抛出异常。
 
-So, **the entire dependency graph should be available**. Either register additional services without using the request scope, or use separate instance of container if your IoC container does not support dependency registrations for multiple scopes.
+所以， **整个依赖项必须是可用的** 。要么注册其他服务而不使用请求作用域， 或者当您的ioc容器不支持多个作用域时使用不同的实例。
