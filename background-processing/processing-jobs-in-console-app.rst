@@ -1,27 +1,27 @@
-Processing jobs in a console application
+在控制台应用程序中处理任务
 =========================================
 
-To start using Hangfire in a console application, you'll need to install Hangfire packages to your console application first. So, use your Package Manager Console window to install it:
+要在控制台应用程序中开始使用Hangfire，您需要首先将Hangfire包安装到控制台应用程序。因此，使用您的软件包管理器控制台窗口进行安装：
 
 .. code-block:: powershell
 
    PM> Install-Package Hangfire.Core
 
-Then, install the needed package for your job storage. For example, you need to execute the following command to use SQL Server:
+然后添加任务存储安装所需的软件包。例如，使用SQL Server：
 
 .. code-block:: powershell
 
    PM> Install-Package Hangfire.SqlServer
 
-.. admonition:: ``Hangfire.Core`` package is enough
+.. admonition:: 仅需 ``Hangfire.Core`` 软件包
    :class: note
 
    Please don't install the ``Hangfire`` package for console applications as it is a quick-start package only and contain dependencies you may not need (for example, ``Microsoft.Owin.Host.SystemWeb``).
 
-After installing packages, all you need is to create a new *Hangfire Server* instance and start it as written in the :doc:`previous <processing-background-jobs>` chapter. However, there are some details here:
+安装软件包后, 只需新建一个 *Hangfire Server* 的实例并像 :doc:`前面章节 <processing-background-jobs>` 一样启动它。不过，还可以有一些细节：
 
-* Since the ``Start`` method is **non-blocking**, we insert a ``Console.ReadKey`` call to prevent instant shutdown of an application.
-* The call to ``Stop`` method is implicit -- it is made through the ``using`` statement.
+* 由于 ``Start`` 方法是 **非堵塞** 的，通过调用 ``Console.ReadKey``  方法防止被在应用中被关闭。
+* 对 ``Stop`` 方法的调用是隐式的 -- 它是通过 ``using`` 语句完成的。
 
 .. code-block:: c#
 
