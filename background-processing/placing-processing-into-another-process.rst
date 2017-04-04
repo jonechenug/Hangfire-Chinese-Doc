@@ -1,31 +1,31 @@
-Placing processing into another process
+在另一个进程中处理
 ========================================
 
-You may decide to move the processing to the different process from the main application. For example, your web application will only enqueue background jobs, leaving their performance to a Console application or Windows Service. First of all, let's overview the reasons for such decision.
+您可以将主应用中的处理任务转移到不同的的程序中。 例如，可以将您的web应用影响到性能的任务转移到别的控制台应用程序或Windows服务中。让我们探讨这么做的原因吧。
 
-Well scenarios
+适用场景
 ---------------
 
-* Your background processing consumes **too much CPU or other resources**, and this decreases main application's performance. So you want to use separate machine for processing background jobs.
-* You have long-running jobs that **are constantly aborted** (retrying, aborted, retried again and so on) due to regular shutdowns of the main application. So you want to use separate process with increased lifetime (and you can't use :doc:`always running mode <../deployment-to-production/making-aspnet-app-always-running>` for your web application).
+* 您的后台任务消耗 **太多的CPU或其他资源**,这会降低主应用的性能。所以你希望使用单独的机器来处理后台任务。
+* 由于主应用定期关机，导致有长期运行的 **不断暂停** 的任务（不停地重试、中止、重试）。因此您希望使用另外的进程处理(同时您的web应用程序没有使用 :doc:`always running 模式 <../deployment-to-production/making-aspnet-app-always-running>` )。
 * *Do you have other suggestions? Please post them in the comment form below*.
 
-You can stop processing background jobs in your main application by simply removing the instantiation of the ``BackgroundJobServer`` class (if you create it manually) or removing an invocation of the ``UseServer`` method from your OWIN configuration class.
+您可以通过删除 ``BackgroundJobServer`` 类的实例化（如果您手动创建）或从OWIN配置类中删除 ``UseServer`` 方法的调用来停止主应用程序中的后台任务。
 
-After accomplishing the first step, you need to enable processing in another process, here are some guides:
+完成第一步后，您需要在另一个程序中处理这些后台任务，请参阅下列文档：
 
-* :doc:`Using Console applications <processing-jobs-in-console-app>`
-* :doc:`Using Windows Services <processing-jobs-in-windows-service>`
+* :doc:`使用控制台应用程序 <processing-jobs-in-console-app>`
+* :doc:`使用Windows服务 <processing-jobs-in-windows-service>`
 
-.. admonition:: Same storage requires the same code base
+.. admonition:: 同一个的任务存储执行一样的代码
    :class: note
 
-   Ensure that all of your Client/Servers use **the same job storage** and **have the same code base**. If client enqueues a job based on the ``SomeClass`` that is absent in server's code, the latter will simply throw a performance exception.
+   确保所有客户端/服务器使用 **同一个任务存储** 并 **具有相同的代码**。 如果客户端入队一个基于 ``SomeClass`` 的后台任务，但是服务器没有对应的代码,将简单地抛出一个性能异常。
 
-If this is a problem, your client may have references only to interfaces, whereas server provide implementations (please see the :doc:`../background-methods/using-ioc-containers` chapter).
+如果有问题，您的客户端可以仅引用接口，而服务器实现接口。 (请参阅 :doc:`../background-methods/using-ioc-containers` 一节)
 
-Doubtful scenarios
+可疑情景
 -------------------
 
-* You don't want to consume additional Thread Pool threads with background processing -- Hangfire Server uses **custom, separate and limited thread pool**.
-* You are using Web Farm or Web Garden and don't want to face with synchronization issues -- Hangfire Server is **Web Garden/Web Farm friendly** by default.
+* 您不想使用额外的线程池来处理后台任务 -- Hangfire Server使用 **自定义、单独和受限的线程池** 。
+* 您正在使用 Web Farm 或者 Web Garden 并且不想面对同步问题 -- Hangfire Server 默认对 **Web Garden/Web Farm 友好** 。
