@@ -1,16 +1,16 @@
-Running multiple server instances
+运行多个服务实例
 ==================================
 
-.. admonition:: Obsolete since 1.5
+.. admonition:: 自1.5后就过时了
    :class: note
    
-   You aren't required to have additional configuration to support multiple background processing servers in the same process since Hangfire 1.5, just skip the article. Server identifiers are now generated using GUIDs, so all the instance names are unique.
+   在Hangfire 1.5之后，您不需要额外的配置来支持多个服务实例处理同一个后台任务，可以跳过本文了。现在使用GUID生成服务器标识符，因此所有实例名称都是唯一的。
 
-It is possible to run multiple server instances inside a process, machine, or on several machines at the same time. Each server use distributed locks to perform the coordination logic.
+可以同时在一个程序、机器或多台机器上运行多个服务器实例。每个服务实例使用分布式锁来执行协调逻辑。
 
-Each Hangfire Server has a unique identifier that consist of two parts to provide default values for the cases written above. The last part is a process id to handle multiple servers on the same machine. The former part is the *server name*, that defaults to a machine name, to handle uniqueness for different machines. Examples: ``server1:9853``, ``server1:4531``, ``server2:6742``.
+在上述情况中，每个Hangfire服务器都有一个唯一的由两部分组成的供默认值标识符。最后一部分是一个程序标识，用于区别同一台机器上的多个服务实例。前一部分是 *服务名称*，默认为机器名，保证不同机器的唯一性。例如: ``server1:9853``、 ``server1:4531`` 、 ``server2:6742``。
 
-Since the defaults values provide uniqueness only on a process level, you should handle it manually if you want to run different server instances inside the same process:
+由于默认值只是在程序级别提供唯一性，因此如果要在同一程序内运行不同的服务实例，则应手动处理它们：
 
 .. code-block:: c#
 
