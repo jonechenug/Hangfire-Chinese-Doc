@@ -1,28 +1,28 @@
-Processing jobs in a web application
+在Web应用程序中处理任务
 =====================================
 
-Ability to process background jobs directly in web applications is a primary goal of Hangfire. No external application like Windows Service or console application is required for running background jobs, however you will be able to change your decision later if you really need it. So, you can postpone architecture decisions that complicate things.
+能够在Web应用程序中直接处理后台任务是Hangfire的主要目标。处理后台任务不需要Windows服务或控制台应用程序等外部应用程序，但您根据需要改变架构。因此，您可以实现复杂的架构。
 
-Since Hangfire does not have any specific dependencies and does not depend on ``System.Web``, it can be used together with any web framework for .NET:
+由于Hangfire没有对 ``System.Web`` 的依赖，因此可以与.NET的任何Web框架一起使用：
 
 * ASP.NET WebForms
 * ASP.NET MVC
 * ASP.NET WebApi
-* ASP.NET vNext (through the ``app.UseOwin`` method)
-* Other OWIN-based web frameworks (`Nancy <http://nancyfx.org/>`_, `FubuMVC <http://mvc.fubu-project.org/>`_, `Simple.Web <https://github.com/markrendle/Simple.Web>`_)
-* Other non-OWIN based web frameworks (`ServiceStack <https://servicestack.net/>`_)
+* ASP.NET vNext (通过 ``app.UseOwin`` 方法)
+* 其他基于OWIN的网络框架 (`Nancy <http://nancyfx.org/>`_, `FubuMVC <http://mvc.fubu-project.org/>`_, `Simple.Web <https://github.com/markrendle/Simple.Web>`_)
+* 其他非OWIN的Web框架 (`ServiceStack <https://servicestack.net/>`_)
 
-Using ``BackgroundJobServer`` class
+使用 ``BackgroundJobServer`` 
 ------------------------------------
 
-The basic way (but not the simplest -- see the next section) to start using Hangfire in a web framework is to use host-agnostic ``BackgroundJobServer`` class that was described in the :doc:`previous chapter <processing-background-jobs>` and call its ``Start`` and ``Dispose`` method in corresponding places.
+ 在一个web框架中，基础 (但不简单 -- 参阅下节) 的使用方法是调用与主机无关的 ``BackgroundJobServer`` 类中的 ``Start`` 和 ``Dispose`` 方法（参阅 :doc:`前一章 <processing-background-jobs>`）。
 
-.. admonition:: Dispose the server instance when possible
+.. admonition:: 尽可能释放服务器实例
    :class: note
 
-   In some web application frameworks it may be unclear when to call the ``Dispose`` method. If it is really impossible, you can omit this call as :doc:`described here <processing-background-jobs>` (but you'll loose the *graceful shutdown* feature).
+   在某些Web应用程序框架中，如果何时调用 ``Dispose`` 方法不是很清楚的情况下，您可以 :doc:`像这样 <processing-background-jobs>` 调用(但可能非 *正确关闭* )。
 
-For example, in ASP.NET applications the best place for start/dispose method invocations is the ``global.asax.cs`` file:
+例如，在ASP.NET应用程序中，调用 start/dispose 方法的最佳方式是在 ``global.asax.cs`` 文件中:
 
 .. code-block:: c#
 
@@ -51,17 +51,17 @@ For example, in ASP.NET applications the best place for start/dispose method inv
        }
    }
 
-Using OWIN extension methods
+使用OWIN扩展方法
 -----------------------------
 
-Hangfire also provides a dashboard that is implemented on top of OWIN pipeline to process requests. If you have simple set-up and want to keep Hangfire initialization logic in one place, consider using Hangfire's extension methods for OWIN's ``IAppBuilder`` interface:
+Hangfire还提供了一个可以在OWIN中处理请求的仪表盘。如果您有简单的Hangfire初始化逻辑，考虑在 ``IAppBuilder`` 接口中使用Hangfire的OWIN扩展方法:
 
-.. admonition:: Install ``Microsoft.Owin.Host.SystemWeb`` for ASP.NET + IIS
+.. admonition:: 为 ASP.NET + IIS 安装 ``Microsoft.Owin.Host.SystemWeb``
    :class: warning
 
-   If you are using OWIN extension methods for ASP.NET application hosted in IIS, ensure you have ``Microsoft.Owin.Host.SystemWeb`` package installed. Otherwise some features like `graceful shutdown <processing-background-jobs>`_ feature will not work for you.
+   如果您想要在IIS托管的ASP.NET应用程序中使用OWIN扩展方法，请确保已安装 ``Microsoft.Owin.Host.SystemWeb`` 软件包。 否则一些功能，如 `正常关闭 <processing-background-jobs>`_ 的功能可能无法正常使用。
    
-   If you installed Hangfire through the ``Hangfire`` package, this dependency is already installed.
+   如果你已经安装 ``Hangfire`` 软件包, 则此依赖项已被安装。
 
 .. code-block:: c#
 
@@ -73,4 +73,4 @@ Hangfire also provides a dashboard that is implemented on top of OWIN pipeline t
         }
     }
 
-This line creates a new instance of the ``BackgroundJobServer`` class automatically, calls the ``Start`` method and registers method ``Dispose`` invocation on application shutdown. The latter is implemented using a ``CancellationToken`` instance stored in the ``host.OnAppDisposing`` environment key.
+将自动创建一个新的  ``BackgroundJobServer`` 类的实例，调用 ``Start`` 方法 并在应用程序关闭时调用 ``Dispose`` 方法。 后者是通过存储在 ``host.OnAppDisposing`` 的环境变量中的 ``CancellationToken`` 实现的。
