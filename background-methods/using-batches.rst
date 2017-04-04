@@ -1,12 +1,12 @@
-Using Batches
+使用批量任务
 ==============
 
-.. admonition:: Pro Only
+.. admonition:: 仅支持Pro
    :class: note
 
-   This feature is a part of `Hangfire Pro <http://hangfire.io/pro/>`_ package set
+   此功能是 `Hangfire Pro <http://hangfire.io/pro/>`_ 软件包的一部分。
 
-Batches allow you to create a bunch of background jobs *atomically*. This means that if there was an exception during the creation of background jobs, none of them will be processed. Consider you want to send 1000 emails to your clients, and they really want to receive these emails. Here is the old way:
+批量任务允许您创建了一堆 *原子性* 的后台任务。这意味着如果在创建后台任务时出现异常，不会处理这些异常。假设你想要发送1000封电子邮件给你的客户，旧的方法是：
 
 .. code-block:: c#
 
@@ -16,9 +16,9 @@ Batches allow you to create a bunch of background jobs *atomically*. This means 
        // What to do on exception?
    }
 
-But what if storage become unavailable on ``i == 500``? 500 emails may be already sent, because worker threads will pick up and process jobs once they created. If you re-execute this code, some of your clients may receive annoying duplicates. So if you want to handle this correctly, you should write more code to track what emails were sent. 
+但是如果任务存储在 ``中途`` 不可用呢？可能已经发送了500封电子邮件，因为工作线程创建后将会接收和处理任务。如果您重新执行此代码，您的某些客户可能会收到烦人的重复邮件。所以如果你想正确处理这个问题，你应该编写更多的代码来跟踪电子邮件的发送情况。
 
-But here is a much simpler method:
+但这里有一个简单的方法:
 
 .. code-block:: c#
 
@@ -30,32 +30,32 @@ But here is a much simpler method:
        }
    });
 
-In case of exception, you may show an error to a user, and simply ask to retry her action after some minutes. No other code required!
+万一有异常，您可能会向用户显示错误，几分钟后重试。不需要其他代码！
 
-Installation
+安装
 -------------
 
-Batches are available in the `Hangfire.Pro <http://nuget.hangfire.io/feeds/hangfire-pro/Hangfire.Pro/>`_ package, and you can install it using NuGet Package Manager Console window as usually:
+批量任务来自 `Hangfire.Pro <http://nuget.hangfire.io/feeds/hangfire-pro/Hangfire.Pro/>`_ 的软件包,您可以使用NuGet软件包管理器控制台窗口进行安装：
 
 .. code-block:: powershell
 
    PM> Install-Package Hangfire.Pro
 
-Batches require to add some additional job filters, some new pages to the Dashboard, and some new navigation menu items. But thanks to the new ``GlobalConfiguration`` class, it is now as simple as a one method call:
+执行批量任务需要添加一些过滤器，一些新页面到仪表板，以及一些新的导航菜单项。幸亏在 ``GlobalConfiguration`` 类中只需简单地调用方法：
 
 .. code-block:: c#
 
    GlobalConfiguration.Configuration.UseBatches();
 
-.. admonition:: Limited storage support
+.. admonition:: 有限的存储支持
    :class: warning
 
-   Only **Hangfire.SqlServer** and **Hangfire.Pro.Redis** job storage implementations are currently supported. There is nothing special for batches, but some new storage methods should be implemented.
+   目前仅支持 **Hangfire.SqlServer** 和 **Hangfire.Pro.Redis** 任务存储。批量任务没有什么特别之处，但需要实现一些新的存储方法。
 
-Chaining Batches
+链式批量任务
 -----------------
 
-Continuations allow you to chain multiple batches together. They will be executed once *all background jobs* of a parent batch finished. Consider the previous example where you have 1000 emails to send. If you want to make final action after sending, just add a continuation:
+允许您将多个批量任务连在一起执行。一旦 *所有父任务* 完成，将执行子任务。回到之前的示例，您有1000个电子邮件发送。如果发送邮件后执行别的操作，只需继续添加任务：
 
 .. code-block:: c#
 
@@ -66,12 +66,12 @@ Continuations allow you to chain multiple batches together. They will be execute
        x.Enqueue(() => NotifyAdministrator());
    });
 
-So batches and batch continuations allow you to define workflows and configure what actions will be executed in parallel. This is very useful for heavy computational methods as they can be distributed to a diffirent machines.
+因此，批量任务和链式批量任务允许您定义工作流和并行操作。这对于密集型计算非常有用，因为它们可以分配到不同的机器。
 
-Complex Workflows
+复杂的工作流程
 ------------------
 
-Create action does not restrict you to create jobs only in *Enqueued* state. You can schedule jobs to execute later, add continuations, add continuations to continuations, etc..
+不限制您仅在入队状态下创建任务。您可以在延迟任务中继续添加后续的操作。
 
 .. code-block:: c#
 
