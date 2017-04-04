@@ -1,19 +1,19 @@
-Dealing with exceptions
+处理异常
 ========================
 
-Bad things happen. Any method can throw different types of exceptions. These exceptions can be caused either by programming errors that require you to re-deploy the application, or transient errors, that can be fixed without additional deployment.
+任何方法都可以抛出不同类型的异常。这些异常可能是需要应用程序重新部署来解决的编程错误，或者是不需要重新部署但可以解决的暂时性错误。
 
-Hangfire handles all exceptions occured both in internal (belonging to Hangfire itself), and external methods (jobs, filters and so on), so it will not bring down the whole application. All internal exceptions are logged (so, don't forget to :doc:`enable logging <../configuration/configuring-logging>`) and the worst case they can lead – background processing will be stopped after ``10`` retry attempts with increasing delay modifier.
+Hangfire可以处理所有内部的(属于Hangfire本身)和相关的外部方法(任务，过滤器等)的异常,因此不会导致整个应用程序被关闭。所有内部异常都被记录(所以不要忘记 :doc:`启用日志 <../configuration/configuring-logging>`)，最糟糕的情况是导致后台任务被暂停并延时重试 ``10`` 次。
 
-When Hangfire encounters external exception that occured during the job performance, it will automatically *try* to change its state to the ``Failed`` one, and you always can find this job in the Monitor UI (it will not be expired unless you delete it explicitly).
+当Hangfire遇到在执行期间发生的外部异常时，它将自动 *重试* 将其状态更改为 ``Failed`` 状态, 但您始终可以在 Monitor UI 中找到该任务(除非您明确删除，否则不会过期)。
 
 .. image:: failed-job.png
 
-In the previous paragraph I said that Hangfire *will try* to change its state to failed, because state transition is one of places, where :doc:`job filters <../extensibility/using-job-filters>` can intercept and change the initial pipeline. And the ``AutomaticRetryAttribute`` class is one of them, that schedules the failed job to be automatically retried after increasing delay.
+上面讲过Hangfire通过 *重试* 将任务状态改为失败，因为该状态将被 :doc:`任务过滤器 <../extensibility/using-job-filters>` 拦截并重新初始化。其中 ``AutomaticRetryAttribute`` 可以安排失败的任务自动重试。
 
-This filter is applied globally to all methods and have 10 retry attempts by default. So, your methods will be retried in case of exception automatically, and you receive warning log messages on every failed attempt. If retry attempts exceeded their maximum, the job will be move to the ``Failed`` state (with an error log message), and you will be able to retry it manually.
+默认情况下该过滤器全局应用于所有方法，进行10次重试尝试。因此如果出现异常，您的方法将被重试，并且每次尝试失败时都会收到警告的日志消息。如果重试尝试超过其最大值，则任务将被标记为 ``Failed`` 状态 (包含错误日志信息),同时您也可以手动重试。
 
-If you don't want a job to be retried, place an explicit attribute with 0 maximum retry attempts value:
+如果您不想要重试一个任务，请设置属性，将其最大重试次数设置为0：
 
 .. code-block:: c#
 
@@ -22,7 +22,7 @@ If you don't want a job to be retried, place an explicit attribute with 0 maximu
    {   
    }
 
-Use the same way to limit the number of attempts to the different value. If you want to change the default global value, add a new global filter:
+使用相同的方式可以将尝试次数限制为不同的值。如果要更改默认全局值，请添加新的全局过滤器：
 
 .. code-block:: c#
 
