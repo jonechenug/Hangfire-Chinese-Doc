@@ -1,11 +1,11 @@
-Tracking the progress
+跟踪进度
 ======================
 
-There are two ways to implement this task: polling and pushing. Polling is easier to understand, but server push is a more comfortable way, because it help you to avoid unnecessary calls to server. Plus, `SignalR <http://signalr.net>`_ greatly simplifies the latter task.
+跟踪任务有两种方法：轮询和推送。轮询很容易理解，但推送是一种更舒适的方式，因为它可以避免对服务器的不必要的调用。此外， `SignalR <http://signalr.net>`_ 大大简化了推送。
 
-I'll show you a simple example, where client needs only to check for a job completion. You can see the full sample in `Hangfire.Highlighter <https://github.com/odinserj/Hangfire.Highlighter>`_ project. 
+我会给你一个简单的例子，客户端只需要检查一个任务的完成情况。您可以在 `Hangfire.Highlighter <https://github.com/odinserj/Hangfire.Highlighter>`_ 项目中看到完整的示例。
 
-Highlighter has the following background job that calls an external web service to highlight code snippets:
+Highlighter有以下后台任务，通过下面的代码调用外部的web服务：
 
 .. code-block:: c#
 
@@ -20,10 +20,10 @@ Highlighter has the following background job that calls an external web service 
         _dbContext.SaveChanges();
     }
 
-Polling for a job status
+轮询工作状态
 -------------------------
 
-When can we say that this job is incomplete? When the ``HighlightedCode`` property value *is null*. When can we say it was completed? When the specified property *has value* – this example is simple enough.
+举一个足够简单的例子，任务未完成意味着什么？意味着 ``HighlightedCode`` 属性 *为空* 。任务已完成又意味着什么？意味着指定的属性 *有值* 。
 
 So, when we are rendering the code snippet that is not highlighted yet, we need to render a JavaScript that makes ajax calls with some interval to some controller action that returns the job status (completed or not) until the job was finished.
 

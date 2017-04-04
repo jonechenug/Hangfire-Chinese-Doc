@@ -1,10 +1,10 @@
 
-Configuring Job Queues
+配置任务队列
 ======================
 
-Hangfire can process multiple queues. If you want to prioritize your jobs or split the processing across your servers (some processes the archive queue, others – the images queue, etc), you can tell Hangfire about your decisions.
+Hangfire可以处理多个队列。如果您要优先处理作业或按服务实例分割(一些处理存档的队列, 其他处理镜像队列等),则可以告知Hangfire处理。
 
-To place a job into a different queue, use the QueueAttribute class on your method:
+要将任务放入不同的队列中， 在你的方法中使用 QueueAttribute 类:
 
 .. code-block:: c#
 
@@ -13,12 +13,12 @@ To place a job into a different queue, use the QueueAttribute class on your meth
 
    BackgroundJob.Enqueue(() => SomeMethod());
   
-.. admonition:: Queue name argument formatting 
+.. admonition:: 队列名称的格式
    :class: warning
 
-   The Queue name argument must consist of lowercase letters, digits and underscore characters only.
+   队列名称参数必须由小写字母，数字和下划线字符组成。
   
-To start to process multiple queues, you need to update your ``BackgroundJobServer`` configuration.
+要处理多个队列，您需要更新 ``BackgroundJobServer`` 的配置。
 
 .. code-block:: c#
 
@@ -31,4 +31,4 @@ To start to process multiple queues, you need to update your ``BackgroundJobServ
    // or
    using (new BackgroundJobServer(options)) { /* ... */ }
 
-The order is important, workers will fetch jobs from the critical queue first, and then from the default queue.
+顺序很重要，worker将首先从critical队列中获取任务，然后从default 队列中获取任务。
