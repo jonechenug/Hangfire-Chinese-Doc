@@ -1,23 +1,23 @@
-Making ASP.NET application always running
+使ASP.NET应用程序始终运行
 ==========================================
 
-By default, Hangfire Server instance in a web application will not be started until the first user hits your site. Even more, there are some events that will bring your web application down after some time (I'm talking about Idle Timeout and different app pool recycling events). In these cases your :doc:`recurring tasks <../background-methods/performing-recurrent-tasks>` and :doc:`delayed jobs <../background-methods/calling-methods-with-delay>` will not be enqueued, and :doc:`enqueued jobs <../background-methods/calling-methods-in-background>` will not be processed. 
+默认情况下，Web应用程序中的Hangfire Server实例不会立即启动(.net core除外)，直到第一个用户访问您的站点。甚至，有一些事情会使您的Web应用程序在一段时间后关闭（空闲时和不同的应用程序池回收事件）。在这些情况下，您的 :doc:`周期任务 <../background-methods/performing-recurrent-tasks>` 和 :doc:`延迟任务 <../background-methods/calling-methods-with-delay>` 将不会入队， 同时 :doc:`排队中的任务 <../background-methods/calling-methods-in-background>` 也不会被执行。
 
-This is particulary true for smaller sites, as there may be long periods of user inactivity. But if you are running critical jobs, you should ensure that your Hangfire Server instance is always running to guarantee the in-time background job processing.
+小网站尤其如此，因为可能有很长的时间没有用户访问。但是，如果您正在执行关键任务，则应确保您的Hangfire Server实例始终运行，以确保即时后台处理。
 
-On-Premise applications
+内部应用程序
 ------------------------
 
-For web applications running on servers under your control, either physical or virtual, you can use the auto-start feature of IIS ≥ 7.5 shipped with Windows Server ≥ 2008 R2. Full setup requires the following steps to be done:
+对于在服务器上运行的Web应用程序（物理或虚拟），您需要使用版本高于2008的 Windows Server 附带的IIS≥7.5的自启功能。完整设置需要完成以下步骤：
 
-1. Enable automatic start-up for Windows Process Activation (WAS) and World Wide Web Publishing (W3SVC) services (enabled by default).
-2. `Configure Automatic Startup <http://technet.microsoft.com/en-us/library/cc772112(v=ws.10).aspx>`_ for an Application pool (enabled by default).
-3. Enable Always Running Mode for Application pool and configure Auto-start feature as written below.
+1. 允许 Windows Process Activation (WAS) 和 World Wide Web Publishing (W3SVC) 服务自启（默认自启）。
+2. 允许应用程序池 `配置自启 <http://technet.microsoft.com/en-us/library/cc772112(v=ws.10).aspx>`_ (默认开启)。
+3. 启用应用程序池的始终运行模式，并配置自启功能，如下所示。
 
-Creating classes
+创建几个类
 ~~~~~~~~~~~~~~~~~
 
-First, you'll need a special class that implements the ``IProcessHostPreloadClient`` interface. It will be called automatically by Windows Process Activation service during its start-up and after each Application pool recycle.
+首先，您需要一个实现 ``IProcessHostPreloadClient`` 接口的特殊类。 它将会随着 Windows Process Activation 服务启动、每个应用程序池回收之后自动调用。
 
 .. code-block:: c#
 
@@ -29,7 +29,7 @@ First, you'll need a special class that implements the ``IProcessHostPreloadClie
        }
    }
 
-Then, update your ``global.asax.cs`` file as described below. :doc:`It is important <../background-processing/processing-background-jobs>` to call the ``Stop`` method of the ``BackgroundJobServer`` class instance, and it is also important to start Hangfire server in environments that don't have auto-start feature enabled (for example, on development machines) also.
+然后， 如下所述更新您的 ``global.asax.cs`` 文件。 :doc:`关键 <../background-processing/processing-background-jobs>` 是记得为 ``BackgroundJobServer`` 的实例调用 ``Stop`` 方法。 同时启动Hangfire server，即使在没有自启功能的环境（如开发环境）中。
 
 .. code-block:: c#
 
@@ -46,7 +46,7 @@ Then, update your ``global.asax.cs`` file as described below. :doc:`It is import
         }
     }
 
-Then, create the ``HangfireBootstrapper`` class as follows. Since both ``Application_Start`` and ``Preload`` methods will be called in environments with auto-start enabled, we need to ensure that the initialization logic will be called exactly once.
+接着, 如下创建 ``HangfireBootstrapper`` 类。 即使 ``Application_Start`` 和 ``Preload`` 方法将在自启的环境中被调用，也需要确保初始化逻辑将被调用一次。
 
 .. code-block:: c#
 
@@ -99,7 +99,7 @@ Then, create the ``HangfireBootstrapper`` class as follows. Since both ``Applica
         }
     }
 
-And optionally, if you want to map Hangfire Dashboard UI, create an OWIN startup class:
+另外, 如果想要启用 Hangfire Dashboard UI, 请创建一个 OWIN startup 类:
 
 .. code-block:: c#
 
@@ -119,15 +119,15 @@ And optionally, if you want to map Hangfire Dashboard UI, create an OWIN startup
        }
    }
 
-Enabling Service Auto-start
+启用服务自动启动
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-After creating above classes, you should edit the global ``applicationHost.config`` file (``%WINDIR%\System32\inetsrv\config\applicationHost.config``). First, you need to change the start mode of your application pool to ``AlwaysRunning``, and then enable Service AutoStart Providers.
+创建上述类后，您应该编辑全局的 ``applicationHost.config`` 文件 (``%WINDIR%\System32\inetsrv\config\applicationHost.config``)。首先，您需要将应用程序池的启动模式更改为 ``AlwaysRunning`` 模式，然后启用 Service AutoStart Providers。
 
-.. admonition:: Save only after all modifications
+.. admonition:: 记得保存所有的修改
    :class: note
 
-   After making these changes, the corresponding application pool will be restarted automatically. Make sure to save changes **only after** modifying all elements.
+   进行这些更改后，相应的应用程序池将自动重新启动。**只有** 在确保所有元素 **修改后** 才保存更改。
 
 .. code-block:: xml
 
@@ -149,35 +149,35 @@ After creating above classes, you should edit the global ``applicationHost.confi
        <add name="ApplicationPreload" type="WebApplication1.ApplicationPreload, WebApplication1" />
    </serviceAutoStartProviders>
 
-Note that for the last entry, ``WebApplication1.ApplicationPreload`` is the full name of a class in your application that implements ``IProcessHostPreloadClient`` and ``WebApplication1`` is the name of your application's library. You can read more about this `here <http://www.asp.net/whitepapers/aspnet4#0.2__Toc253429241>`_.
+请注意最后一项， ``WebApplication1.ApplicationPreload`` 在程序中是类的全名，并且 ``IProcessHostPreloadClient`` 和 ``WebApplication1`` 是应用程序库的名称。 更多资料请参阅 `这里 <http://www.asp.net/whitepapers/aspnet4#0.2__Toc253429241>`_ 。
  
-There is no need to set IdleTimeout to zero -- when Application pool's start mode is set to ``AlwaysRunning``, idle timeout does not working anymore.
+没有必要将IdleTimeout设置为零 -- 当应用程序池的启动模式设置为 ``AlwaysRunning``, idle timeout 将失去作用。
 
-Ensuring auto-start feature is working
+确保自启功能正在工作
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. admonition:: If something went wrong...
+.. admonition:: 如果出现问题...
    :class: note
 
-   If your app won't load after these changes made, check your Windows Event Log by opening **Control Panel → Administrative Tools → Event Viewer**. Then open *Windows Logs → Application* and look for a recent error records.
+   如果您的应用程序在进行这些更改后无法加载，请通过打开 **控制面板** → **管理工具** → **事件查看器来检查Windows事件日志** 。然后通过 *Windows日志 → 应用程序* 查找最新的错误记录。
 
-The simplest method - recycle your Application pool, wait for 5 minutes, then go to the Hangfire Dashboard UI and check that current Hangfire Server instance was started 5 minutes ago. If you have problems -- don't hesitate to ask them on `forum <http://discuss.hangfire.io>`_.
+最简单的检查方法  - 回收您的应用程序池，5分钟后转到Hangfire 仪表盘并检查当前的 Hangfire Server 实例是否在5分钟前启动。如果您有问题 - 请不要犹豫，在 `论坛上 <http://discuss.hangfire.io>`_ 提问。
 
-Azure web applications
+Azure Web应用程序
 -----------------------
 
-Enabling always running feature for application hosted in Microsoft Azure is simpler a bit: just turn on the ``Always On`` switch on the Configuration page and save settings.
+在 Microsoft Azure 启用应用程序始终运行的功能更简单: 只需打开配置页面上的 ``Always On`` 的开关并保存。
 
-This setting does not work for free sites.
+此设置不适用于免费网站。
 
 .. image:: always-on.png
    :alt: Always On switch
 
-If nothing works for you…
+如果不适用... 
 --------------------------
 
-… because you are using shared hosting, free Azure web site or something else (btw, can you tell me your configuration in this case?), then you can use the following ways to ensure that Hangfire Server is always running:
+… 正在使用共享托管，免费Azure网站或其他 (顺便问一句，您可以在这种情况下告诉我您的配置？), 那么您可以使用以下方式确保Hangfire Server始终运行：
 
-1. Use :doc:`separate process <../background-processing/placing-processing-into-another-process>` to handle background jobs either on the same, or dedicated host.
-2. Make HTTP requests to your web site on a recurring basis by external tool (for example, `Pingdom <https://www.pingdom.com/>`_).
-3. *Do you know any other ways? Let me know!*
+1. 使用 :doc:`独立的进程 <../background-processing/placing-processing-into-another-process>`  来处理相同或专用主机上的后台任务。
+2. 通过外部工具（如, `Pingdom <https://www.pingdom.com/>`_)定期向您的网站发送HTTP请求。
+3. *还有别的方法? 请告诉我!*
