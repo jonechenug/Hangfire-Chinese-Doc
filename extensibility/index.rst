@@ -1,4 +1,4 @@
-Extensibility
+扩展
 ==============
 
 .. toctree::

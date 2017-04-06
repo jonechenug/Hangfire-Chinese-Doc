@@ -1,9 +1,9 @@
-Using job filters
+使用任务过滤器
 ==================
 
-All processes are implemented with Chain-of-responsibility pattern and can be intercepted like with ASP.NET MVC Action Filters.
+所有任务都实现了 Chain-of-responsibility 模式并且可以像ASP.NET MVC操作过滤器一样被拦截。
 
-**Define the filter**
+**定义过滤器**
 
 .. code-block:: c#
 
@@ -65,9 +65,9 @@ All processes are implemented with Chain-of-responsibility pattern and can be in
         }
     }
 
-**Apply it**
+**使用过滤器**
 
-Like ASP.NET filters, you can apply filters on method, class and globally:
+像ASP.NET过滤器一样，您可以在方法，类和全局上应用过滤器：
 
 .. code-block:: c#
 
