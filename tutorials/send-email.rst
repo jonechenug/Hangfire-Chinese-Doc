@@ -1,17 +1,17 @@
-Sending Mail in Background with ASP.NET MVC
+在ASP.NET MVC 中发送邮件
 ============================================
 
 .. contents:: Table of Contents
    :local:
    :depth: 2
 
-Let's start with a simple example: you are building your own blog using ASP.NET MVC and want to receive an email notification about each posted comment. We will use the simple but awesome `Postal <http://aboutcode.net/postal/>`_ library to send emails. 
+们从一个简单的例子开始：您正在使用ASP.NET MVC构建您自己的博客，并希望收到每个相关文章评论的电子邮件通知。 我们将使用简单好用的 `Postal <http://aboutcode.net/postal/>`_ 库发送邮件。
 
 .. tip::
 
-   I've prepared a simple application that has only comments list, you can `download its sources <https://github.com/odinserj/Hangfire.Mailer/releases/tag/vBare>`_ to start work on tutorial.
+   我准备了一个只有评论列表的简单应用程序， 您可以 `下载源码 <https://github.com/odinserj/Hangfire.Mailer/releases/tag/vBare>`_ 开始教程。
 
-You already have a controller action that creates a new comment, and want to add the notification feature.
+您已经有一个控制器操作来创建新的评论，并希望添加通知功能。
 
 .. code-block:: c#
 
@@ -29,16 +29,16 @@ You already have a controller action that creates a new comment, and want to add
         return RedirectToAction("Index");
     }
 
-Installing Postal
+安装 Postal
 ------------------
 
-First, install the ``Postal`` NuGet package:
+首先, 安装 ``Postal`` 软件包:
 
 .. code-block:: powershell
 
    Install-Package Postal.Mvc5
 
-Then, create ``~/Models/NewCommentEmail.cs`` file with the following contents:
+然后, 如下文创建 ``~/Models/NewCommentEmail.cs`` 文件:
 
 .. code-block:: c#
 
@@ -54,7 +54,7 @@ Then, create ``~/Models/NewCommentEmail.cs`` file with the following contents:
         }
     }
 
-Create a corresponding template for this email by adding the ``~/Views/Emails/NewComment.cshtml`` file:
+添加 ``~/Views/Emails/NewComment.cshtml`` 文件，为此电子邮件创建相应的模板：
 
 .. code-block:: text
 
@@ -70,7 +70,7 @@ Create a corresponding template for this email by adding the ``~/Views/Emails/Ne
 
     <3
 
-And call Postal to sent email notification from the ``Create`` controller action:
+通过 ``Create`` 控制器调用Postal发送电子邮件:
 
 .. code-block:: c#
 
@@ -95,7 +95,7 @@ And call Postal to sent email notification from the ``Create`` controller action
         return RedirectToAction("Index");
     }
 
-Then configure the delivery method in the ``web.config`` file (by default, tutorial source code uses ``C:\Temp`` directory to store outgoing mail):
+然后在 ``web.config`` 文件中配置调用方法（ (默认情况下，本教程使用 ``C:\Temp`` 目录来存储发送出去的邮件):
 
 .. code-block:: xml
 
@@ -107,29 +107,29 @@ Then configure the delivery method in the ``web.config`` file (by default, tutor
     </mailSettings>
   </system.net>
 
-That's all. Try to create some comments and you'll see notifications in the pickup directory.
+就这样。尝试发表一些评论，您将在目录中看到通知。
 
-Further considerations
+进一步思考
 -----------------------
 
-But why should a user  wait until the notification was sent? There should be some way to send emails asynchronously, in the background, and return a response to the user as soon as possible. 
+为什么让用户等待通知发送？ 应该使用某些方法在后台异步发送电子邮件，以便尽快向响应用户请求。
 
-Unfortunately, `asynchronous <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ controller actions `do not help <http://blog.stephencleary.com/2012/08/async-doesnt-change-http-protocol.html>`_ in this scenario, because they do not yield response to the user while waiting for the asynchronous operation to complete. They only solve internal issues related to thread pooling and application capacity.
+然而， `异步 <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ 控制器在这种情况下 `没有帮助 <http://blog.stephencleary.com/2012/08/async-doesnt-change-http-protocol.html>`_ ， 因为它们在等待异步操作完成时不会立即响应用户请求。它们只解决与线程池和应用程序的内部问题。
 
-There are `great problems <http://blog.stephencleary.com/2012/12/returning-early-from-aspnet-requests.html>`_ with background threads also. You should use Thread Pool threads or custom ones that are running inside ASP.NET application with care – you can simply lose your emails during the application recycle process (even if you register an implementation of the ``IRegisteredObject`` interface in ASP.NET).
+后台线程同样也有 `很大的问题 <http://blog.stephencleary.com/2012/12/returning-early-from-aspnet-requests.html>`_ 。您必须在ASP.NET应用程序中使用线程池线程或自定义线程池。然而在应用程序回收线程时您会丢失电子邮件 (即使您在ASP.NET 中实现了 ``IRegisteredObject`` 接口).
 
-And you are unlikely to want to install external Windows Services or use Windows Scheduler with a console application to solve this simple problem (we are building a personal blog, not an e-commerce solution).
+而您不太可能想要安装外部Windows服务或使用带控制台应用程序的 Windows Scheduler 来解决这个简单的问题 (只是个人博客项目，又不是电子商务解决方案)。
 
-Installing Hangfire
+安装 Hangfire
 --------------------
 
-To be able to put tasks into the background and not lose them during application restarts, we'll use `Hangfire <http://hangfire.io>`_. It can handle background jobs in a reliable way inside ASP.NET application without external Windows Services or Windows Scheduler.
+为了能够将任务放在后台，在应用程序重新启动期间不会丢失任务，我们将使用 `Hangfire <http://hangfire.io>`_ 。它可以在ASP.NET应用程序中以可靠的方式处理后台作业，而无需外部Windows服务或Windows Scheduler。
 
 .. code-block:: powershell
 
    Install-Package Hangfire
 
-Hangfire uses SQL Server or Redis to store information about background jobs. So, let's configure it. Add a new class Startup into the root of the project:
+Hangfire使用 SQL Server 或者 Redis 来存储有关后台任务的信息。配置它并在项目根目录新增一个 Startup 类:
 
 .. code-block:: c#
 
@@ -151,9 +151,10 @@ Hangfire uses SQL Server or Redis to store information about background jobs. So
 
     }
 
-The ``SqlServerStorage`` class will install all database tables automatically on application start-up (but you are able to do it manually).
 
-Now we are ready to use Hangfire. It asks us to wrap a piece of code that should be executed in background in a public method.
+``SqlServerStorage`` 类会在应用程序启动时自动安装所有数据库表（但你也可以手工）。
+
+现在我们可以使用 Hangfire 了。 我们封装一个在后台执行的公共方法：
 
 .. code-block:: c#
 
@@ -171,9 +172,9 @@ Now we are ready to use Hangfire. It asks us to wrap a piece of code that should
         return RedirectToAction("Index");
     }
 
-Note, that we are passing a comment identifier instead of a full comment – Hangfire should be able to serialize all method call arguments to string values. The default serializer does not know anything about our ``Comment`` class. Furthermore, the integer identifier takes less space in serialized form than the full comment text.
+注意，我们传递的是一个评论的标识符而不是评论的全部信息 – Hangfire 将序列化所有的参数为字符串。默认情况下， serializer 不需要序列化整个的 ``Comment`` 类。另外，使用标识符以比完整的评论实体占用更小的空间。
 
-Now, we need to prepare the ``NotifyNewComment`` method that will be called in the background. Note that ``HttpContext.Current`` is not available in this situation, but Postal library can work even `outside of ASP.NET request <http://aboutcode.net/postal/outside-aspnet.html>`_. But first install another package (that is needed for Postal 0.9.2, see `the issue <https://github.com/andrewdavey/postal/issues/68>`_). Let's update package and bring in the RazorEngine
+现在，我们需要准备在后台调用的 ``NotifyNewComment`` 方法。请注意， ``HttpContext.Current`` 在这种情况下不可用，但是 Postal 库却可以 `在  ASP.NET 请求之外 <http://aboutcode.net/postal/outside-aspnet.html>`_ 使用。 在此之前先安装另一个软件包 (Postal 版本需要为0.9.2, 参阅 `issue <https://github.com/andrewdavey/postal/issues/68>`_) 。我们来更新包并引入RazorEngine。
 
 .. code-block:: powershell
 
@@ -206,17 +207,17 @@ Now, we need to prepare the ``NotifyNewComment`` method that will be called in t
         }
     }
 
-This is a plain C# static method. We are creating an ``EmailService`` instance, finding the desired comment and sending a mail with Postal. Simple enough, especially when compared to a custom Windows Service solution.
+这是一个简单的C＃静态方法。 我们正在创建一个 ``EmailService`` 实例，找到指定的评论并使用 Postal 发送邮件。足够简单吧，特别是与自定义的Windows服务解决方案相比。
 
 .. warning::
 
-   Emails now are sent outside of request processing pipeline. As of Postal 1.0.0, there are the following `limitations <http://aboutcode.net/postal/outside-aspnet.html>`_: you can not use layouts for your views, you MUST use ``Model`` and not ``ViewBag``, embedding images is `not supported <https://github.com/andrewdavey/postal/issues/44>`_ either.
+   电子邮件在请求管道之外发送。由于Postal 1.0.0, 存在以下 `限制 <http://aboutcode.net/postal/outside-aspnet.html>`_: 您不能使用 views 和 ``ViewBag``， 必须是 ``Model`` ;同样的，嵌入图像也是 `不支持 <https://github.com/andrewdavey/postal/issues/44>`_ 。
 
-That's all! Try to create some comments and see the ``C:\Temp`` path. You also can check your background jobs at ``http://<your-app>/hangfire``. If you have any questions, you are welcome to use the comments form below.
+就这样！尝试发布一些评论并查看 ``C:\Temp`` 路径。你也可以在 ``http://<your-app>/hangfire`` 检查你的后台任务。如果您有任何问题，欢迎使用下面的评论表。
 
 .. note::
 
-   If you experience assembly load exceptions, please, please delete the following sections from the ``web.config`` file (I forgot to do this, but don't want to re-create the repository):
+   如果遇到程序集加载异常，请从 ``web.config`` 文件中删除以下部分 (我忘了这样做，但不想重新创建存储库):
 
    .. code-block:: xml
 
@@ -229,10 +230,10 @@ That's all! Try to create some comments and see the ``C:\Temp`` path. You also c
         <bindingRedirect oldVersion="0.0.0.0-2.2.0.0" newVersion="2.2.0.0" />
       </dependentAssembly>
 
-Automatic retries
+自动重试
 ------------------
 
-When the ``emailService.Send`` method throws an exception, Hangfire will retry it automatically after a delay (that is increased with each attempt). The retry attempt count is limited (10 by default), but you can increase it. Just apply the ``AutomaticRetryAttribute`` to the ``NotifyNewComment`` method:
+当 ``emailService.Send`` 方法引发异常时，Hangfire会在延迟一段时间(每次重试都会增加)后自动重试。重试次数(默认 10 次 )有限, 但您可以增加它。只需将 ``AutomaticRetryAttribute`` 加到 ``NotifyNewComment`` 方法:
 
 .. code-block:: c#
 
@@ -242,10 +243,10 @@ When the ``emailService.Send`` method throws an exception, Hangfire will retry i
        /* ... */
    }
 
-Logging
+日志
 --------
 
-You can log cases when the maximum number of retry attempts has been exceeded. Try to create the following class:
+当超过最大重试次数时，可以记录日志。尝试创建以下类：
 
 .. code-block:: c#
 
@@ -269,9 +270,9 @@ You can log cases when the maximum number of retry attempts has been exceeded. T
         }
     }
 
-And add it:
+再添加:
 
-Either globally by calling the following method at application start:
+通过在应用程序启动时调用以下方法来达到全局效果：
 
 .. code-block:: c#
 
@@ -287,7 +288,7 @@ Either globally by calling the following method at application start:
             app.UseHangfireServer();
         }
 
-Or locally by applying the attribute to a method:
+或者局部应用于一个方法：
 
 .. code-block:: c#
 
@@ -297,16 +298,15 @@ Or locally by applying the attribute to a method:
        /* ... */
    }
    
-You can see the logging is working when you add a new breakpoint in LogFailureAttribute class inside method  OnStateApplied
+当LogFailureAttribute命中一个方法时将会有新的日志。
 
-If you like to use any of common logger and you do not need to do anything. Let's take NLog as an example.
-Install NLog (current version: 4.2.3)
+使用您喜欢的任何常见的日志库，并且再做任何事情。以NLog为例。安装NLog（当前版本：4.2.3）。
 
 .. code-block:: powershell
 
    Install-Package NLog
 
-Add a new Nlog.config file into the root of the project.
+将新的 Nlog.config 文件加到项目的根目录中。
  
 .. code-block:: xml
 
@@ -341,24 +341,24 @@ Add a new Nlog.config file into the root of the project.
   </rules>
 </nlog>
 
-run application and new log file could be find on cd %appdata%\HangFire.Mailer\Debug.log 
+运行应用程序后 新的日志文件可以 %appdata%\HangFire.Mailer\Debug.log 找到。
 
-Fix-deploy-retry
+修复重新部署
 -----------------
 
-If you made a mistake in your ``NotifyNewComment`` method, you can fix it and restart the failed background job via the web interface. Try it:
+如果在 ``NotifyNewComment`` 方法中出错, 您可以尝试并通过Web界面启动失败的后台任务来修复它：
 
 .. code-block:: c#
 
    // Break background job by setting null to emailService:
    EmailService emailService = null;
 
-Compile a project, add a comment and go to the web interface by typing ``http://<your-app>/hangfire``. Exceed all automatic attempts, then fix the job, restart the application, and click the ``Retry`` button on the *Failed jobs* page.
+编译一个项目，发布一个评论，然后打开 ``http://<your-app>/hangfire`` 的网页。超过所有自动重试的限制次数，然后修复任务中的bug，重新启动应用程序，最后点击 *Failed jobs* 页面上的 ``Retry`` 按钮。
 
-Preserving current culture
+保存语言区域
 ---------------------------
 
-If you set a custom culture for your requests, Hangfire will store and set it during the performance of the background job. Try the following:
+如果您为请求设置了自定义语言区域，则Hang​​fire将在后台作业执行期间存储和设置它。尝试以下：
 
 .. code-block:: c#
 
@@ -366,7 +366,7 @@ If you set a custom culture for your requests, Hangfire will store and set it du
    Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("es-ES");
    BackgroundJob.Enqueue(() => NotifyNewComment(model.Id));
 
-And check it inside the background job:
+并在后台任务中检查：
 
 .. code-block:: c#
 
