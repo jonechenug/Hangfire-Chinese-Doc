@@ -1,34 +1,34 @@
-Using performance counters
+使用性能计数器
 ===========================
 
-.. admonition:: Pro Only
+.. admonition:: 仅限Pro
    :class: note
 
-   This feature is a part of `Hangfire Pro <http://hangfire.io/pro/>`_ package set
+   此功能是 `Hangfire Pro <http://hangfire.io/pro/>`_ 软件包的一部分。
 
-Performance Counters is a standard way to `measure <http://blogs.msdn.com/b/securitytools/archive/2009/11/04/how-to-use-perfmon-in-windows-7.aspx>`_ different application metrics on a Windows platform. This package enables Hangfire to publish performance counters so you can track them using different tools, including `Performance Monitor <http://technet.microsoft.com/en-us/library/cc749249.aspx>`_, `Nagios <http://www.nagios.org/>`_, `New Relic <http://newrelic.com/>`_ and others.
+性能计数器是在Windows平台上 `测量 <http://blogs.msdn.com/b/securitytools/archive/2009/11/04/how-to-use-perfmon-in-windows-7.aspx>`_ 不同应用程序度量的标准方法。该软件包使Hangfire能够发布性能计数器，以便您可以使用不同的工具（包括 `Performance Monitor <http://technet.microsoft.com/en-us/library/cc749249.aspx>`_ 、 `Nagios <http://www.nagios.org/>`_ 、 `New Relic <http://newrelic.com/>`_ 等）。
 
 .. image:: perfmon.png
 
-Installation
+安装
 -------------
 
-Before configuring Hangfire and starting to publish performance counters, you need to add them to *every machine* you use by running ``hangfire-perf.exe`` program with the ``ipc`` argument (for both install and update actions):
+在配置Hangfire并开始发布性能计数器之前，您需要在每台运行 ``hangfire-perf.exe`` 程序的机器上传入 ``ipc`` 参数 (每次安装或更新操作时):
 
 .. code-block:: powershell
  
    hangfire-perf ipc
 
-To uninstall performance counters, use the ``upc`` command:
+要卸载性能计数器，请使用 ``upc`` 参数:
 
 .. code-block:: powershell
 
    hangfire-perf upc
 
-Configuration
+配置
 --------------
 
-Performance counters are exposed through the ``Hangfire.Pro.PerformanceCounters`` package. After adding it to your project, you need only to initialize them by invoking the following method:
+性能计数器通过 ``Hangfire.Pro.PerformanceCounters`` 软件包安装。将其添加到您的项目之后，您只需要通过调用以下方法来初始化它们：
 
 .. code-block:: csharp
 
@@ -36,7 +36,7 @@ Performance counters are exposed through the ``Hangfire.Pro.PerformanceCounters`
 
    PerformanceCounters.Initialize("unique-app-id");
 
-Initialization logic is much easier within your OWIN Startup class:
+在OWIN启动类中的初始化逻辑容易得多：
 
 .. code-block:: csharp
 
@@ -47,10 +47,10 @@ Initialization logic is much easier within your OWIN Startup class:
        app.UseHangfirePerformanceCounters();
    }
 
-Performance counters
+性能计数器
 ---------------------
 
-Here is the list of performance counters currently exposed:
+以下是实现的性能计数器列表：
 
 * Creation Process Executions
 * Creation Process Executions/Sec
@@ -60,4 +60,4 @@ Here is the list of performance counters currently exposed:
 * Transitions to Succeeded State/Sec
 * Transitions to Failed State/Sec
 
-Want more? Just open a `GitHub Issue <https://github.com/HangfireIO/Hangfire/issues/new>`_ and describe what metric you want to see.
+想要更多？只需打开一个 `GitHub Issue <https://github.com/HangfireIO/Hangfire/issues/new>`_ 并描述您想要查看的指标。
