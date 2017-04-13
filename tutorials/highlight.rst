@@ -1,52 +1,52 @@
-Highlighter Tutorial
+语法高亮教程
 =========================
 
 ====================== =======
-Simple sample          https://github.com/odinserj/Hangfire.Highlighter 
-Full sample            http://highlighter.hangfire.io, `sources <https://github.com/odinserj/Hangfire/tree/master/samples/Hangfire.Sample.Highlighter>`_
+简单示例                https://github.com/odinserj/Hangfire.Highlighter 
+完整示例                http://highlighter.hangfire.io, `sources <https://github.com/odinserj/Hangfire/tree/master/samples/Hangfire.Sample.Highlighter>`_
 ====================== =======
 
 .. contents:: Table of Contents
    :local:
    :depth: 2
 
-Overview
+概述
 ---------
 
-Consider you are building a code snippet gallery web application like `GitHub Gists <http://gist.github.com>`_, and want to implement the syntax highlighting feature. To improve user experience, you are also want it to work even if a user disabled JavaScript in her browser.
+假设您正在构建一个代码仓库的Web应用程序，如 `GitHub Gists <http://gist.github.com>`_, 并希望实现语法高亮显示的功能。为了提高用户体验，即使用户在浏览器中禁用了JavaScript，您也希望它能够正常工作。
 
-To support this scenario and to reduce the project development time, you chosen to use a web service for syntax highlighting, such as http://pygments.appspot.com or http://www.hilite.me.
+为了实现功能并减少项目开发时间，选择使用Web服务进行语法高亮，就像 http://pygments.appspot.com 或 http://www.hilite.me。
 
 .. note::
 
-   Although this feature can be implemented without web services (using different syntax highlighter libraries for .NET), we are using them just to show some pitfalls regarding to their usage in web applications.
+   虽然此功能可以在没有Web服务的情况下实现 (为.NET使用其他的语法高亮库),我们只是为了展示在web应用程序中存在的某些缺席。
 
-   You can substitute this example with real-world scenario, like using external SMTP server, another services or even long-running CPU-intensive task.
+   您可以将此示例替换为真实场景，例如使用外部SMTP服务、其他服务，甚至长时间运行的CPU密集型任务。
 
-Setting up the project
+配置项目
 -----------------------
 
 .. tip::
 
-   This section contains steps to prepare the project. However, if you don't want to do the boring stuff or if you have problems with project set-up, you can download the tutorial `source code <https://github.com/odinserj/Hangfire.Highlighter/releases/tag/vBefore>`_ and go straight to :ref:`the-problem` section.
+   本节包含项目准备的步骤。但是如果您不想做无聊的事情，或者如果您在配置项目上有问题, 可以下载教程 `源码 <https://github.com/odinserj/Hangfire.Highlighter/releases/tag/vBefore>`_ ，直接转到 :ref:`the-problem` 一节.
 
-Prerequisites
+先决条件
 ^^^^^^^^^^^^^^
 
-The tutorial uses **Visual Studio 2012** with `Web Tools 2013 for Visual Studio 2012 <http://www.asp.net/visual-studio/overview/2012/aspnet-and-web-tools-20131-for-visual-studio-2012>`_ installed, but it can be built either with Visual Studio 2013.
+本教程使用带 `Web Tools 2013 for Visual Studio 2012 <http://www.asp.net/visual-studio/overview/2012/aspnet-and-web-tools-20131-for-visual-studio-2012>`_ 扩展的 **Visual Studio 2012** , 也可以使用 Visual Studio 2013 构建。
 
-The project uses **.NET 4.5**, **ASP.NET MVC 5** and **SQL Server 2008 Express** or later database.
+本项目使用 **.NET 4.5**、 **ASP.NET MVC 5** 和 **SQL Server 2008 Express** 或更高版本的数据库。
 
-Creating a project
+创建项目
 ^^^^^^^^^^^^^^^^^^^
 
-Let's start from scratch. Create an *ASP.NET MVC 5 Empty Project* and name this awesome web application ``Hangfire.Highlighter`` (you can name it as you want, but prepare to change namespaces).
+从零开始，创建一个 *ASP.NET MVC 5 空项目 * ，并命名这个Web应用程序为 ``Hangfire.Highlighter`` (可以按需要命名，但记得更改命名空间)。
 
-I've included some screenshots to make the project set-up not so boring:
+我已经截取一些屏幕截图，使配置项目不那么无聊：
 
 .. image:: highlighter/newproj.png
 
-Then, we need a controller to handle web requests. So scaffold an **MVC 5 Controller - Empty** controller and call it ``HomeController``:
+然后,我们需要一个控制器来处理Web请求。搭建一个 **MVC 5 Controller - Empty** 控制器并命名为 ``HomeController``:
 
 .. image:: highlighter/addcontrollername.png
 
