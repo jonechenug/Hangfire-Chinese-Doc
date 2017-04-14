@@ -19,7 +19,7 @@
 
 .. note::
 
-   虽然此功能可以在没有Web服务的情况下实现 (为.NET使用其他的语法高亮库),我们只是为了展示在web应用程序中存在的某些缺席。
+   虽然此功能可以在没有Web服务的情况下实现 (为.NET使用其他的语法高亮库),我们只是为了展示在web应用程序中存在的某些缺陷。
 
    您可以将此示例替换为真实场景，例如使用外部SMTP服务、其他服务，甚至长时间运行的CPU密集型任务。
 
@@ -40,7 +40,7 @@
 创建项目
 ^^^^^^^^^^^^^^^^^^^
 
-从零开始，创建一个 *ASP.NET MVC 5 空项目 * ，并命名这个Web应用程序为 ``Hangfire.Highlighter`` (可以按需要命名，但记得更改命名空间)。
+从零开始，创建一个 *ASP.NET MVC 5 空项目* ，并命名这个Web应用程序为 ``Hangfire.Highlighter`` (可以按需要命名，但记得更改命名空间)。
 
 我已经截取一些屏幕截图，使配置项目不那么无聊：
 
@@ -50,7 +50,7 @@
 
 .. image:: highlighter/addcontrollername.png
 
-Our controller contains now only ``Index`` action and looks like:
+我们的控制器现在只有 ``Index`` action ，看起来像:
 
 .. code-block:: c#
 
@@ -62,31 +62,31 @@ Our controller contains now only ``Index`` action and looks like:
        }
    }
 
-We have a controller with a single action. To test that our application is working, scaffold an **empty view** for ``Index`` action.
+我们现在只有一个 action 的单个控制器。为了测试我们的应用程序是否正常工作，为 ``Index`` action 新增一个 **empty view** 。
 
 .. image:: highlighter/addview.png
 
-The view scaffolding process also adds additional components to the project, like *Bootstrap*, *jQuery*, etc. After these steps my solution looks like:
+添加视图脚手架的的过程中能够还向项目添加了额外的组件, 像是 *Bootstrap*, *jQuery*, 等。 在这些步骤之后，我的解决方案如下所示：
 
 .. image:: highlighter/solutionafterview.png
 
-Let's test the initial setup of our application. Press the :kbd:`F5` key to start debugging and wait for your browser. If you encounter exceptions or don't see the default page, try to reproduce all the given steps, see the `tutorial sources <https://github.com/odinserj/Hangfire.Highlighter>`_ or ask a question in the comments below.
+我们来测试一下应用程序的初始化。按下 :kbd:`F5` 启动调试，等待你的浏览器跳转。如果遇到异常或没有看到默认页面，请尝试重现所有给定的步骤，请参阅 `本教程源码 <https://github.com/odinserj/Hangfire.Highlighter>`_ 或在下面评论中提出问题。
 
-Defining a model
+定义模型
 ~~~~~~~~~~~~~~~~
 
-We should use a persistent storage to preserve snippets after application restarts. So, we'll use **SQL Server 2008 Express** (or later) as a relational storage, and **Entity Framework** to access the data of our application.
+应用程序重新启动后，我们应该使用持久存储来保存代码。因此，我们将使用 **SQL Server 2008 Express** (或更高版本) 作为关系存储，并使用 **Entity Framework** 访问我们的应用程序的数据。
 
-Installing Entity Framework
+安装 Entity Framework
 ++++++++++++++++++++++++++++
 
-Open the `Package Manager Console <https://docs.nuget.org/docs/start-here/using-the-package-manager-console>`_ window and type:
+打开 `Package Manager Console <https://docs.nuget.org/docs/start-here/using-the-package-manager-console>`_ 的窗口并输入：
 
 .. code-block:: powershell
 
    Install-Package EntityFramework
 
-After the package installed, create a new class in the ``Models`` folder and name it ``HighlighterDbContext``:
+安装软件包后，在 ``Models`` 文件夹中创建一个新类并命名为 ``HighlighterDbContext``:
 
 .. code-block:: c#
 
@@ -104,7 +104,7 @@ After the package installed, create a new class in the ``Models`` folder and nam
        }
    }
 
-Please note, that we are using undefined yet connection string name ``HighlighterDb``. So, lets add it to the ``web.config`` file just after the ``</configSections>`` tag:
+请注意，我们使用命名为 ``HighlighterDb`` 的未定义连接字符串。 将它添加到 ``web.config`` 文件中的 ``</configSections>`` 标签之后:
 
 .. code-block:: xml
 
@@ -112,16 +112,16 @@ Please note, that we are using undefined yet connection string name ``Highlighte
      <add name="HighlighterDb" connectionString="Server=.\sqlexpress; Database=Hangfire.Highlighter; Trusted_Connection=True;" providerName="System.Data.SqlClient" />
    </connectionStrings>
 
-Then enable **Entity Framework Code First Migrations** by typing in your *Package Manager Console* window the following command:
+启用 **Entity Framework Code First Migrations** ，需要在 *Package Manager Console* 窗口中输入如下命令:
 
 .. code-block:: powershell
 
    Enable-Migrations
 
-Adding code snippet model
+添加代码模型
 ++++++++++++++++++++++++++
 
-It's time to add the most valuable class in the application. Create the ``CodeSnippet`` class in the ``Models`` folder with the following code:
+现在需要在应用程序中添加最有价值的类，在 ``Models`` 文件夹中创建命名为 ``CodeSnippet`` 的类并添加如下代码:
 
 .. code-block:: c#
 
@@ -146,26 +146,26 @@ It's time to add the most valuable class in the application. Create the ``CodeSn
        }
    }
 
-Don't forget to include the following property in the ``HighlighterDbContext`` class:
+不要忘记在命名为 ``HighlighterDbContext`` 类中包含以下属性:
 
 .. code-block:: c#
 
    // ~/Models/HighlighterDbContext.cs
    public DbSet<CodeSnippet> CodeSnippets { get; set; }
 
-Then add a database migration and run it by typing the following commands into the Package Manager Console window:
+然后添加数据库迁移，通过在包管理器控制台窗口中输入以下命令来运行它：
 
 .. code-block:: powershell
 
    Add-Migration AddCodeSnippet
    Update-Database
 
-Our database is ready to use!
+我们的数据库已经可以使用了！
 
-Creating actions and views
+创建动作和视图
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now its time to breathe life into our project. Please, modify the following files as described.
+现在需要为我们的项目注入生命了，请按照上述说明修改以下文件。
 
 .. code-block:: c#
 
@@ -301,16 +301,16 @@ Now its time to breathe life into our project. Please, modify the following file
 
   <div>@Html.Raw(Model.HighlightedCode)</div>
 
-Adding MiniProfiler
+添加 MiniProfiler
 ~~~~~~~~~~~~~~~~~~~~
 
-To not to profile our application by eye, we'll use the ``MiniProfiler`` package available on NuGet.
+不想动眼观察应用, 我们将使用NuGet上提供的 ``MiniProfiler`` 软件包。
 
 .. code-block:: c#
 
   Install-Package MiniProfiler
 
-After installing, update the following files as described to enable profiling.
+安装后，如下述更新文件，启用概要分析。
 
 .. code-block:: c#
 
@@ -340,7 +340,7 @@ After installing, update the following files as described to enable profiling.
     @StackExchange.Profiling.MiniProfiler.RenderIncludes()
   </head>
 
-You should also include the following setting to the ``web.config`` file, if the ``runAllManagedModulesForAllRequests`` is set to ``false`` in your application (it is by default):
+您还需要在 ``web.config`` 文件中包含以下配置, 如果在您的应用程序中 ``runAllManagedModulesForAllRequests`` 设置为 ``false`` （默认情况）:
 
 .. code-block:: xml
 
@@ -356,16 +356,16 @@ You should also include the following setting to the ``web.config`` file, if the
     </system.webServer>
   </configuration>
 
-Hiliting the code
+代码语法高亮
 ^^^^^^^^^^^^^^^^^^
 
-It is the core functionality of our application. We'll use the http://hilite.me service that provides HTTP API to perform highlighting work. To start to consume its API, install the ``Microsoft.Net.Http`` package:
+这是我们应用程序的核心功能。 我们将使用提供 HTTP API 的 http://hilite.me 服务器来完成语法高亮的工作。要使用它的 API, 请安装 ``Microsoft.Net.Http`` 软件包:
 
 .. code-block:: powershell
 
    Install-Package Microsoft.Net.Http
 
-This library provides simple asynchronous API for sending HTTP requests and receiving HTTP responses. So, let's use it to make an HTTP request to the *hilite.me* service:
+该库提供简单的异步API，用于发送HTTP请求和接收HTTP响应。 所以我们使用它来向 *hilite.me* 服务器发出 HTTP 请求：
 
 .. code-block:: c#
 
@@ -409,7 +409,7 @@ This library provides simple asynchronous API for sending HTTP requests and rece
       }
   }
 
-Then, call it inside the ``HomeController.Create`` method. 
+然后在 ``HomeController.Create`` 方法中调用它。 
 
 .. code-block:: c#
 
@@ -448,71 +448,71 @@ Then, call it inside the ``HomeController.Create`` method.
 
 .. note::
 
-  We are using synchronous controller action method, although it is recommended to use `asynchronous one <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ to make network calls inside ASP.NET request handling logic. As written in the given article, asynchronous actions greatly increase application :abbr:`capacity (The maximum throughput a system can sustain, for a given workload, while maintaining an acceptable response time for each individual transaction. – from "Release It" book written by Michael T. Nygard)`, but does not help to increase :abbr:`performance (How fast the system processes a single transaction. – from "Release It" book written by Michael T. Nygard)`. You can test it by yourself with a `sample application <http://highlighter.hangfire.io>`_ – there are no differences in using sync or async actions with a single request.
+  我们正在使用同步控制器动作方法，尽管建议在 ASP.NET 处理网络请求逻辑中使用 `异步的方式 <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ 。正如给定文章所述，异步操作大大增加了应用程序的 :abbr:`处理能力 (The maximum throughput a system can sustain, for a given workload, while maintaining an acceptable response time for each individual transaction. – from "Release It" book written by Michael T. Nygard)`, 但并没有助于提高 :abbr:`性能 (How fast the system processes a single transaction. – from "Release It" book written by Michael T. Nygard)` 。您可以使用 `示例应用程序 <http://highlighter.hangfire.io>`_ 自行测试 – 在使用单个请求的同步或异步操作中没有任何差异。
 
-  This sample is aimed to show you the problems related to application performance. And sync actions are used only to keep the tutorial simple.
+  此示例旨在向您展示与应用程序性能相关的问题。同步操作简化了教程。
 
 .. _the-problem:
 
-The problem
+问题
 ------------
 
 .. tip::
 
-  You can use the `hosted sample <http://highlighter.hangfire.io>`_ to see what's going on.
+  您可以使用 `托管示例 <http://highlighter.hangfire.io>`_ 来查看发生了什么。
 
-Now, when the application is ready, try to create some code snippets, starting from a smaller ones. Do you notice a small delay after you clicked the :guilabel:`Create` button?
+现在，当应用程序准备就绪时，尝试创建一些代码片段，从较小的代码片段开始。单击 :guilabel:`Create` 按钮后，您是否注意到一小段延迟？
 
-On my development machine it took about 0.5s to redirect me to the details page. But let's look at *MiniProfiler* to see what is the cause of this delay:
+在我的开发机器上，花了大约0.5s将我重定向到详细信息页面。但是我们通过 *MiniProfiler* 看看延迟的原因是什么：
 
 .. image:: highlighter/smcodeprof.png
 
-As we see, call to web service is our main problem. But what happens when we try to create a medium code block?
+正如我们所看到的，请求 web 服务器是主要的问题。但是当我们尝试创建一个代码块时会发生什么？
 
 .. image:: highlighter/mdcodeprof.png
 
-And finally a large one:
+最后来个大的:
 
 .. image:: highlighter/lgcodeprof.png
 
-The lag is increasing when we enlarge our code snippets. Moreover, consider that syntax highlighting web service (that is not under your control) experiences heavy load, or there are latency problems with network on their side. Or consider heavy CPU-intensive task instead of web service call that you can not optimize well. 
+当我们扩大我们的代码片段时，延迟越来越大。此外,考虑到语法高亮请求 web 服务器(不在您的控制中) 会有高负载,或者网络方面存在延迟问题，抑或繁重的 CPU 密集型任务而不是无法优化的网络请求。
 
-Your users will be annoyed with un-responsive application and inadequate delays.
+您的用户将因为应用程序的无法响应和不正确的延迟而感到烦恼。
 
-Solving a problem
+解决问题
 ------------------
 
-What can you do with a such problem? `Async controller actions <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ will not help, as I said :ref:`earlier <async-note>`. You should somehow take out web service call and process it outside of a request, in the background. Here is some ways to do this:
+解决这样的问题需要做什么呢？ `异步控制器操作 <http://www.asp.net/mvc/tutorials/mvc-4/using-asynchronous-methods-in-aspnet-mvc-4>`_ 就像我 :ref:`之前 <async-note>` 说的不会有任何帮助。您应该以某种方式Web服务调用，并在后台处理该请求。这里有一些方法可以做到这一点：
 
-* **Use recurring tasks** and scan un-highlighted snippets on some interval.
-* **Use job queues**. Your application will enqueue a job, and some external worker threads will listen this queue for new jobs.
+* **使用周期任务** 并在一段时间内扫描未高亮显示的代码片段。
+* **使用任务队列** 您的应用程序将入队任务，并且一些外部工作线程将监听此队列的新任务。
 
-Ok, great. But there are several difficulties related to these techniques. The former requires us to set some check interval. Shorter interval can abuse our database, longer interval increases latency. 
+太好了。但是这些技术有几个困难。前者要求我们设置一些检查间隔。较短的间隔可能滥用我们的数据库，间隔时间加长则会增加延迟。
 
-The latter way solves this problem, but brings another ones. Should the queue be persistent? How many workers do you need? How to coordinate them? Where should they work, inside of ASP.NET application or outside, in Windows Service? The last question is the sore spot of long-running requests processing in ASP.NET application:
+后一种方式解决了这个问题，但又带来了另一个问题。队列应该持久吗？你需要多少 worker？如何协调？他们应该在ASP.NET应用程序或外部在Windows服务中工作？最后一个问题是ASP.NET应用程序中长时间运行的请求处理的痛点：
 
 .. warning::
 
-   **DO NOT** run long-running processes inside of your ASP.NET application, unless they are prepared to **die at any instruction** and there is mechanism that can re-run them.
+   **不要** 在ASP.NET应用程序中运行长时间运行的程序，除非他们可以在 **在任何指令中死亡** ，并且有机制可以重新运行它们。
 
-   They will be simple aborted on application shutdown, and can be aborted even if the ``IRegisteredObject`` interface is used due to time out.
+   它们将在应用程序关闭时被简单地中止， 即使由于超时后调用 ``IRegisteredObject`` 接口而被回收。
 
-Too many questions? Relax, you can use `Hangfire <http://hangfire.io>`_. It is based on *persistent queues* to survive on application restarts, uses *reliable fetching* to handle unexpected thread aborts and contains *coordination logic* to allow multiple worker threads. And it is simple enough to use it.
+太多问题？ 请放松, 你可以使用 `Hangfire <http://hangfire.io>`_ 。它基于 *持久性队列* ，在应用程序重新启动后重生。 使用 *可靠的消费* 来处理线程中止的意外，并包含 *协同逻辑* 处理多个工作线程。并且它使用起来很简单。
 
 .. note::
 
-   **YOU CAN** process your long-running jobs with Hangfire inside ASP.NET application – aborted jobs will be restarted automatically.
+   **您可以** 在ASP.NET应用程序中使用Hangfire处理长时间运行的任务 - 中止的任务将自动重新启动。
 
-Installing Hangfire
+安装 Hangfire
 ^^^^^^^^^^^^^^^^^^^^
 
-To install Hangfire, run the following command in the Package Manager Console window:
+要安装 Hangfire，请在 Package Manager Console 窗口中运行以下命令：
 
 .. code-block:: powershell
 
    Install-Package Hangfire
 
-After the package installed, add or update the OWIN Startup class with the following lines of code.
+安装软件包后，使用以下代码行添加或更新OWIN启动类。
 
 .. code-block:: c#
 
@@ -524,12 +524,12 @@ After the package installed, add or update the OWIN Startup class with the follo
        app.UseHangfireServer();
    }
 
-That's all. All database tables will be created automatically on first start-up.
+就这样。所有数据库表将在第一次启动时自动创建。
 
-Moving to background
+转到后台处理
 ^^^^^^^^^^^^^^^^^^^^^
 
-First, we need to define our background job method that will be called when worker thread catches highlighting job. We'll simply define it as a static method inside the ``HomeController`` class with the ``snippetId`` parameter.
+首先，我们需要定义我们的后台任务调用方法，当工作线程捕捉语法高亮任务时，它将被调用。我们将在 ``HomeController`` 中简单的定义一个带 ``snippetId`` 参数的静态方法。
 
 .. code-block:: c#
 
@@ -552,9 +552,9 @@ First, we need to define our background job method that will be called when work
       }
   }
 
-Note that it is simple method that does not contain any Hangfire-related functionality. It creates a new instance of the ``HighlighterDbContext`` class, looks for the desired snippet and makes a call to a web service.
+请注意，它不包含任何与Hangfire相关的功能的简单方法。它创建一个新 ``HighlighterDbContext`` 类的实例，查找所需的代码段并请求 Web 服务器。
 
-Then, we need to place the invocation of this method on a queue. So, let's modify the ``Create`` action:
+然后，我们需要将这个方法的调用放在一个队列上。所以让我修改 ``Create`` 动作:
 
 .. code-block:: c#
 
@@ -582,21 +582,21 @@ Then, we need to place the invocation of this method on a queue. So, let's modif
       return View(snippet);
   }
 
-That's all. Try to create some snippets and see the timings (don't worry if you see an empty page, I'll cover it a bit later):
+就这样，尝试创建一些代码片段并查看时间（不要担心，如果您看到一个空白的页面，我稍后会介绍）：
 
 .. image:: highlighter/jobprof.png
 
-Good, 6ms vs ~2s. But there is another problem. Did you notice that sometimes you are redirected to the page with no source code at all? This happens because our view contains the following line:
+不错, 6ms vs ~2s 。但还有另一个问题。你有没有注意到，有时没有被重定向到源代码的页面？这是因为我们的视图包含以下行：
 
 .. code-block:: html
   
    <div>@Html.Raw(Model.HighlightedCode)</div>
 
-Why the ``Model.HighlightedCode`` returns null instead of highlighted code? This happens because of **latency** of the background job invocation – there is some delay before a worker fetch the job and perform it. You can refresh the page and the highlighted code will appear on your screen.
+为什么 ``Model.HighlightedCode`` 返回null而不是突出显示的代码？ 出现这种情况的一个 **潜在** 原因是刚好在调用后台任务 – 在一个worker 提取任务并处理它时会有一些延迟。您可以刷新页面，代码高亮将显示在屏幕上。
 
-But empty page can confuse a user. What to do? First, you should take this specific into a place. You can reduce the latency to a minimum, but **you can not avoid it**. So, your application should deal with this specific issue. 
+但空白页可能会混淆用户，该怎么办？首先，你需要具体到一个方面。您可以将延迟降至最低，但 **您无法避免**。所以，你的应用程序应该处理这个具体问题。
 
-In our example, we'll simply show the notification to a user and the un-highlighted code, if highlighted one is not available yet:
+在我们的示例中，我们将简单地在代码未高亮的情况下出示告知，如果高亮了就不出示了：
 
 .. code-block:: html
 
@@ -621,7 +621,7 @@ In our example, we'll simply show the notification to a user and the un-highligh
       }
   </div>
 
-But instead you could poll your application from a page using AJAX until it returns highlighted code:
+但是，您可以使用 AJAX 轮询您的应用程序，直到返回高亮的代码：
 
 .. code-block:: c#
 
@@ -638,21 +638,21 @@ But instead you could poll your application from a page using AJAX until it retu
        return Content(snippet.HighlightedCode);
    }
 
-Or you can also use send a command to users via SignalR channel from your ``HighlightSnippet`` method. But that's another story.
+或者您还可以通过 SignalR调用 ``HighlightSnippet`` 方法向用户发出命令。但这是另一件事了。
 
 .. note::
 
-   Please, note that user still waits until its source code will be highlighted. But the application itself became more responsive and he is able to do another things while background job is processed.
+   请注意，用户仍然等待代码被高亮。但应用程序本身提高了可用性，并且他能够在处理后台任务时做另外一件事情。
 
-Conclusion
+结论
 -----------
 
-In this tutorial you've seen that:
+在本教程中，您已经看到：
 
-* Sometimes you can't avoid long-running methods in ASP.NET applications.
-* Long running methods can cause your application to be un-responsible from the users point of view.
-* To remove waits you should place your long-running method invocation into background job.
-* Background job processing is complex itself, but simple with Hangfire.
-* You can process background jobs even inside ASP.NET applications with Hangfire.
+* 有时您无法避免在 ASP.NET 应用程序中调用长期运行的方法。
+* 长时间运行的方法可能会导致您的应用程序对于用户来说是不可靠的。
+* 要避免等待，您应该将长时间运行的方法调用到后台任务中。
+* 后台任务本身很复杂，但是使用Hangfire简单。
+* 即使在具有 Hangfire 的 ASP.NET 应用程序中也可以处理后台任务。
 
-Please, ask any questions using the comments form below.
+请使用下面的评论提出任何问题。
