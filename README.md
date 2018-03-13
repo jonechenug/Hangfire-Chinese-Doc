@@ -1,5 +1,5 @@
 # Hangfire 中文文档
-基于官方文档机翻修改，在线访问地址：[点我访问](http://koukouge-hangfire.daoapp.io/quick-start.html)
+基于官方文档机翻修改，在线访问地址：[点我访问](http://hangfirezh.daocloudapp.com/quick-start.html)
 # Docker 支持
 运行:
 ```
